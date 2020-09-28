@@ -17,7 +17,8 @@ import numpy as np
 
 from mesa import Agent
 from .airports import Airport
-from ..negotiations.greedy import do_greedy # !!! Don't forget the others.
+from ..negotiations.greedy import do_greedy
+from ..negotiations.CNP import do_CNP
 import math
 
 
