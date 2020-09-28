@@ -29,16 +29,23 @@ def do_CNP(flight):
             
         ### MANAGERS ###
         else:
-            # Check bid list
+            for bid in flight.received_bids:    
+                # Calculate reservation value
+                reservation_value = 5
+                
+                
+                # Check bid list
+                uf = bid['value']   # Add alliance and possible other stuff later
             
-            
-            # Calculate utility function (uf)
-            
-            
-            # Accept bid if uf >= reservation value 
-            
-            
-            # Form formation if possible
+                # Accept bid if uf >= reservation value 
+                if uf >= reservation_value:
+                    flight.start_formation(bid['bidding_agent'], bid['value'])
+                
+                else:
+                    if bid['exp_date'] == 0:
+                        flight.received_bids.remove(flight.received_bids.index(bid))
+                    else:
+                        bid['exp_date'] -= 1
             
             
             # If the manager does not accept bid for n steps choose another manager
