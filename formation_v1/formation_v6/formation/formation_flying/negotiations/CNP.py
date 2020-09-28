@@ -16,8 +16,16 @@ def do_CNP(flight):
             # If the agent is not yet in a formation, auctioneers find managers to make bid to
             formation_targets = flight.find_greedy_candidate()
             
-            # Make bids to managers
+            # Set bid expiration date
+            bid_expiration_date = 3
             
+            # Make bids to managers
+            for formation_target in formation_targets:
+                fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
+                
+                bid_value = 0.25 * fuel_saving
+                flight.make_bid(formation_target, bid_value,bid_expiration_date)
+                
             
         ### MANAGERS ###
         else:
