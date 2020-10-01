@@ -96,6 +96,7 @@ class Flight(Agent):
         # =============================================================================
         self.accepting_bids = 0
         self.received_bids = []
+        self.made_bids = []
 
         self.manager = self.model.random.choice([0, 1])
         if self.manager:
@@ -334,8 +335,11 @@ class Flight(Agent):
     #   Making the bid.
     # =========================================================================
     def make_bid(self, bidding_target, bid_value, bid_expiration_date):
-        bid = {"bidding_agent": self, "value": bid_value, "exp_date": bid_expiration_date}
-        bidding_target.received_bids.append(bid)
+        bid_target = {"bidding_agent": self, "value": bid_value, "exp_date": bid_expiration_date}
+        bid_maker = {"bid_target": bidding_target, "value":bid_value, "exp_date": bid_expiration_date}
+        bidding_target.received_bids.append(bid_target)
+        self.made_bids.append(bid_maker)
+        
 
     # =========================================================================
     #   This function randomly chooses a new destination airport. 
