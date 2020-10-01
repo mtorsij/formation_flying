@@ -57,7 +57,7 @@ model_params = {
 
 # To run model with a variable parameter:
 # example: variable_params = {"communication_range": [0, 100, 500]}
-variable_params = {}
+variable_params = {"communication_range": [200]}
 
 model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used, 
                            "steps": compute_model_steps, 

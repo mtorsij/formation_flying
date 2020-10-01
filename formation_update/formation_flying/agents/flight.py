@@ -17,7 +17,8 @@ import numpy as np
 
 from mesa import Agent
 from .airports import Airport
-from ..negotiations.greedy import do_greedy # !!! Don't forget the others.
+from ..negotiations.greedy import do_greedy
+from ..negotiations.CNP import do_CNP # !!! Don't forget the others.
 import math
 
 
@@ -116,13 +117,15 @@ class Flight(Agent):
     def step(self):
         if self.state == "flying":
             if self.model.negotiation_method == 0:
+                raise Exception('greedy')
                 do_greedy(self)
 
             if len(self.agents_in_my_formation) > 0 and self.formation_state == 0:
                 raise Exception("Agent status is no-formation, but it has agents registered as being in its formation...")
 
-            # if self.model.negotiation_method == 1:
-            #     do_CNP(self)
+            if self.model.negotiation_method == 1:
+#                raise Exception('CNP')
+                do_CNP(self)
             # if self.model.negotiation_method == 2:
             #     do_English(self)
             # if self.model.negotiation_method == 3:

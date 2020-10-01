@@ -79,7 +79,7 @@ class FormationFlying(Model):
         self.destination_agent_list = []
         self.departure_window = departure_window
         self.fuel_reduction = fuel_reduction
-        self.negotiation_method = negotiation_method
+        self.negotiation_method = 1
 
         self.fuel_savings_closed_deals = 0
 
@@ -181,6 +181,7 @@ class FormationFlying(Model):
 
         self.schedule.step()
         self.datacollector.collect(self)
+        
 
 
 

@@ -19,12 +19,18 @@ def do_CNP(flight):
         
         # Make bids to managers
         for formation_target in formation_targets:
-            # Check if a bid already has been made to the auctioneer
-            
+            # Calculate bid
             fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
-            
             bid_value = 0.25 * fuel_saving
-            flight.make_bid(formation_target, bid_value, bid_expiration_date)
+            bid = {"bid_target": formation_target, "value":bid_value, "exp_date": bid_expiration_date}
+            
+            # Check if a bid already has been made to the auctioneer
+            if bid in flight.made_bids:
+                flight.make_bid(formation_target, bid_value * 1.1, bid_expiration_date)
+                break
+            else:
+                flight.make_bid(formation_target, bid_value, bid_expiration_date)
+                break
             
         
     ### MANAGERS ###
@@ -40,15 +46,18 @@ def do_CNP(flight):
             if uf >= reservation_value:
                 if flight.formation_state == 0:
                     flight.start_formation(bid['bidding_agent'], bid['value'])
+                    break
                     
                 elif flight.formation_state != 0 or flight.formation_state != 4:
                     flight.add_to_formation(bid['bidding_agent'], bid['value'])
+                    break
             
+            # Check the expiration date (NOT WORKING)
             else:
                 if bid['exp_date'] == 0:
                     flight.received_bids.remove(flight.received_bids.index(bid))
                 else:
-                    bid['exp_date'] -= 1
+                    bid['exp_date'] = bid['exp_date'] 
                 
 
         
