@@ -290,6 +290,7 @@ class Flight(Agent):
 
         if discard_received_bids:
             self.received_bids = []
+            target_agent.made_bids = []
 
         if self.distance_to_destination(target_agent.pos) < 0.001:
             # Edge case where agents are at the same spot.
