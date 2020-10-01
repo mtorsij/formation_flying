@@ -12,7 +12,7 @@ from formation_flying.parameters import model_params, max_steps, n_iterations, m
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
                             variable_parameters=variable_params,
-                            iterations=n_iterations,
+                            iterations=1,
                             max_steps=max_steps,
                             model_reporters=model_reporter_parameters,
                             agent_reporters=agent_reporter_parameters
