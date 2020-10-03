@@ -97,6 +97,7 @@ class Flight(Agent):
         self.accepting_bids = 0
         self.received_bids = []
         self.made_bids = []
+        self.manager_expiration = 0
 
         self.manager = self.model.random.choice([0, 1])
         if self.manager:
@@ -226,6 +227,7 @@ class Flight(Agent):
         if discard_received_bids:
             # Discard all bids that have been received
             self.received_bids = []
+            target_agent.made_bids = []
 
         self.joining_point = self.calc_middle_point(self.pos, target_agent.pos)
         self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)

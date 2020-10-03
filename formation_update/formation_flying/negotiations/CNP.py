@@ -52,6 +52,11 @@ def do_CNP(flight):
                         break
                 else:
                     flight.received_bids.remove(bid)
+        
+        
+        ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
+#        if flight.manager_expiration == 4 and flight.formation_state == 0:
+#            flight.manager_
             
             # Check the expiration date (NOT WORKING)
           
