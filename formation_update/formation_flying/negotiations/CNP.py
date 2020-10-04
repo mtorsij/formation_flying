@@ -3,6 +3,7 @@
 # =============================================================================
 
 
+
 def do_CNP(flight):
     if not flight.departure_time:
         raise Exception("The object passed to the greedy protocol has no departure time, therefore it seems that it is not a flight.")
