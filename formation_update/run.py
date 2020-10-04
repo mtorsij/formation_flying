@@ -5,7 +5,7 @@ if sys.version_info[0]==3 and sys.version_info[1] >= 8 and sys.platform.startswi
 from formation_flying.server import server
 
 
-server.port = 8950
+server.port = 8600
 server.launch()
 
 

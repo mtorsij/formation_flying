@@ -6,6 +6,7 @@
 """
 
 import numpy as np
+import random
 np.seterr(all='raise')
 
 from mesa import Model
@@ -18,7 +19,6 @@ from .parameters import model_params, max_steps, n_iterations, model_reporter_pa
 
 from .agents.flight import Flight
 from .agents.airports import Airport
-
 
 
 
@@ -79,12 +79,11 @@ class FormationFlying(Model):
         self.destination_agent_list = []
         self.departure_window = departure_window
         self.fuel_reduction = fuel_reduction
-        self.negotiation_method = 1
+        self.negotiation_method = negotiation_method
 
         self.fuel_savings_closed_deals = 0
 
         self.total_planned_fuel = 0
-
 
         self.new_formation_counter = 0
         self.add_to_formation_counter = 0
@@ -107,9 +106,18 @@ class FormationFlying(Model):
     # =========================================================================
 
     def make_agents(self):
-
+        # Ensure that 40% of agents is involved in an alliance
+        n_alliance = int(0.4*self.n_flights)
+        alliance_lst = []
         for i in range(self.n_flights):
-
+            if i < n_alliance:
+                alliance_lst.append(1)
+            else:
+                alliance_lst.append(0)        
+        random.shuffle(alliance_lst)
+        
+        for i in range(self.n_flights):
+            alliance = alliance_lst[i]
 
             departure_time = self.random.uniform(0, self.departure_window)
             pos = self.random.choice(self.origin_list)
@@ -124,6 +132,7 @@ class FormationFlying(Model):
                 departure_time,
                 self.speed,
                 self.vision,
+                alliance,
             )
             self.space.place_agent(flight, pos)
             self.schedule.add(flight)

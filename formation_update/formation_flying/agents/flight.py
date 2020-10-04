@@ -57,6 +57,7 @@ class Flight(Agent):
             departure_time,
             speed,
             communication_range,
+            alliance,
     ):
 
         super().__init__(unique_id, model)
@@ -94,6 +95,12 @@ class Flight(Agent):
         #
         #   !!! TODO Exc. 1.3: implement when a manager can become an auctioneer and vice versa.!!!
         # =============================================================================
+        
+        # Alliance
+        self.alliance = alliance
+        
+        
+        # Manager and auctioneer determination
         self.accepting_bids = 0
         self.received_bids = []
         self.made_bids = []
@@ -339,7 +346,7 @@ class Flight(Agent):
     # =========================================================================
     def make_bid(self, bidding_target, bid_value, bid_expiration_date):
         bid_target = {"bidding_agent": self, "value": bid_value, "exp_date": bid_expiration_date}
-        bid_maker = {"bid_target": bidding_target, "value":bid_value, "exp_date": bid_expiration_date}
+        bid_maker = {"bid_target": bidding_target, "value":bid_value}
         bidding_target.received_bids.append(bid_target)
         self.made_bids.append(bid_maker)
         
