@@ -1,15 +1,12 @@
 # =============================================================================
 # This file contains the function to do Contract Net Protocol (CNP). 
 # =============================================================================
-
+from formation_flying.negotiations.bid_strategies.simple_strategy import simple_strategy
 
 
 def do_CNP(flight):
     if not flight.departure_time:
         raise Exception("The object passed to the greedy protocol has no departure time, therefore it seems that it is not a flight.")
-
-#    if flight.alliance:
-#        raise Exception('Flight is part of alliance')
     
     ### AUCTIONEERS ###
     if flight.accepting_bids == 0 and flight.formation_state == 0:
@@ -19,23 +16,20 @@ def do_CNP(flight):
         # Set bid expiration date
         bid_expiration_date = 3
         
+        
         # Make bids to managers
         for formation_target in formation_targets:
+            # Calculate potential fuel saving
+            potential_fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
             
-            ### HERE WE CAN IMPLEMENT MULTIPLE BIDDING STRATEGIES
-            # Calculate bid
-            fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
-            bid_value = 0.15 * fuel_saving
-            bid = {"bid_target": formation_target, "value":bid_value}
+            ### BIDDING STRATEGIES
+            if flight.strategy == 0:
+                bid_value = simple_strategy(flight, formation_target, potential_fuel_saving)
+                
+            ### HERE WE CAN IMPLEMENT MORE BID STRATEGIES
+#            if flight.strategy ==1:
             
-            
-            # Check if a bid already has been made to the manager
-            if bid in flight.made_bids:
-                old_bid = flight.made_bids[flight.made_bids.index(bid)]
-                new_bid_value = old_bid['value'] * 1.1
-                flight.make_bid(formation_target, new_bid_value, bid_expiration_date)
-            else:
-                flight.make_bid(formation_target, bid_value, bid_expiration_date)
+            flight.make_bid(formation_target, bid_value, bid_expiration_date)
             
         
     ### MANAGERS ###
@@ -89,7 +83,20 @@ def do_CNP(flight):
             flight.manager_expiration += 1
             
      
-
+#            ### HERE WE CAN IMPLEMENT MULTIPLE BIDDING STRATEGIES
+#            # Calculate bid
+#            fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
+#            bid_value = 0.15 * fuel_saving
+#            bid = {"bid_target": formation_target, "value":bid_value}
+#            
+#            
+#            # Check if a bid already has been made to the manager
+#            if bid in flight.made_bids:
+#                old_bid = flight.made_bids[flight.made_bids.index(bid)]
+#                new_bid_value = old_bid['value'] * 1.1
+#                flight.make_bid(formation_target, new_bid_value, bid_expiration_date)
+#            
+#            else:
     
                 
 

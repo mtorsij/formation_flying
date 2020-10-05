@@ -99,6 +99,8 @@ class Flight(Agent):
         # Alliance
         self.alliance = alliance
         
+        # Bid strategy for CNP
+        self.strategy = 0
         
         # Manager and auctioneer determination
         self.accepting_bids = 0
@@ -133,7 +135,6 @@ class Flight(Agent):
                 raise Exception("Agent status is no-formation, but it has agents registered as being in its formation...")
 
             if self.model.negotiation_method == 1:
-#                raise Exception('CNP')
                 do_CNP(self)
             # if self.model.negotiation_method == 2:
             #     do_English(self)
@@ -346,7 +347,7 @@ class Flight(Agent):
     # =========================================================================
     def make_bid(self, bidding_target, bid_value, bid_expiration_date):
         bid_target = {"bidding_agent": self, "value": bid_value, "exp_date": bid_expiration_date}
-        bid_maker = {"bid_target": bidding_target, "value":bid_value}
+        bid_maker = {"bid_target": bidding_target, "value":bid_value, "exp_date": bid_expiration_date}
         bidding_target.received_bids.append(bid_target)
         self.made_bids.append(bid_maker)
         
