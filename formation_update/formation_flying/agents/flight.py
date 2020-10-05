@@ -19,13 +19,13 @@ from mesa import Agent
 from .airports import Airport
 from ..negotiations.greedy import do_greedy
 from ..negotiations.CNP import do_CNP # !!! Don't forget the others.
-import math
+from math import *
 
 
 def calc_distance(p1, p2):
     # p1 = tuple(p1)
     # p2 = tuple(p2)
-    dist = (((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2) ** 0.5)
+    dist = (((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2) ** 0.5) ##x and y position x=0 y=1
     return dist
 
 
@@ -227,7 +227,6 @@ class Flight(Agent):
         if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) == 0:
             raise Exception("Model isn't designed for this scenario.")
 
-
         self.model.add_to_formation_counter += 1
         self.accepting_bids = False
 
@@ -382,7 +381,16 @@ class Flight(Agent):
     #
     #   !!! TODO Exc. 1.3: improve calculation joining/leaving point.!!!
     # =========================================================================
-    def calc_middle_point(self, a, b):
+    def calc_middle_point(self, a, b): #busy with this
+        w_a = a.agents_in_my_formation #weights determined by fuel reduction
+        w_b = b.agents_in_my_formation #self.model.fuel_reduction*(b.agents_in_my_formation-1)+1
+        w_c1 = w_a + w_b - 0.01
+        w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
+        if w_c1 <= w_c2:
+            w_c = w_c1
+        else:
+            w_c = w_c2
+        theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
         return [0.5 * (a[0] + b[0]), 0.5 * (a[1] + b[1])]
 
     def distance_to_destination(self, destination):
