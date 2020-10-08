@@ -87,7 +87,8 @@ def do_CNP(flight):
                     
             ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
 #            if not new_manager:
-#                
+#              
+            
             # Make current manager auctioneer
             flight.manager = 0
             flight.accepting_bids = 0
