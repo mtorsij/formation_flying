@@ -87,10 +87,12 @@ class FormationFlying(Model):
 
         self.new_formation_counter = 0
         self.add_to_formation_counter = 0
-
+        
         self.total_fuel_consumption = 0
         self.total_flight_time = 0
-
+        
+        self.alliance_saved_fuel = 0
+        
         self.origin_list = []
         self.destination_list = []
 
@@ -117,6 +119,7 @@ class FormationFlying(Model):
         random.shuffle(alliance_lst)
         
         for i in range(self.n_flights):
+            # Assign to alliance using the random alliance list
             alliance = alliance_lst[i]
 
             departure_time = self.random.uniform(0, self.departure_window)

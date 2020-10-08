@@ -16,7 +16,6 @@ def do_CNP(flight):
         # Set bid expiration date
         bid_expiration_date = 3
         
-        
         # Make bids to managers
         for formation_target in formation_targets:
             # Calculate potential fuel saving
@@ -35,12 +34,16 @@ def do_CNP(flight):
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
         for bid in flight.received_bids:    
-            # Calculate reservation value
-            reservation_value = 10 #0.2 * (flight.calculate_potential_fuelsavings(bid['bidding_agent']))
+            
+            # If in alliance set reservation value lower
+            if flight.alliance == 1 and bid['bidding_agent'].alliance == 1:
+                reservation_value = 5
+            else:
+                reservation_value = 10
             
             # Check bid list
             uf = bid['value']  # Add alliance and possible other stuff later
-        
+            
             # Accept bid if uf >= reservation value 
             if uf >= reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
@@ -71,8 +74,8 @@ def do_CNP(flight):
                     new_manager = True
                     
             ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
-            if not new_manager:
-                new_manager
+#            if not new_manager:
+#                
             
             # Make current manager auctioneer
             flight.manager = 0
@@ -81,22 +84,6 @@ def do_CNP(flight):
             
         elif flight.formation_state == 0:
             flight.manager_expiration += 1
-            
-     
-#            ### HERE WE CAN IMPLEMENT MULTIPLE BIDDING STRATEGIES
-#            # Calculate bid
-#            fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
-#            bid_value = 0.15 * fuel_saving
-#            bid = {"bid_target": formation_target, "value":bid_value}
-#            
-#            
-#            # Check if a bid already has been made to the manager
-#            if bid in flight.made_bids:
-#                old_bid = flight.made_bids[flight.made_bids.index(bid)]
-#                new_bid_value = old_bid['value'] * 1.1
-#                flight.make_bid(formation_target, new_bid_value, bid_expiration_date)
-#            
-#            else:
     
                 
 

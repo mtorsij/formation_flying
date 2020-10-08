@@ -280,7 +280,11 @@ class Flight(Agent):
             raise Exception("ERROR: Trying to start a formation with itself")
         if len(self.agents_in_my_formation) > 0 or len(target_agent.agents_in_my_formation) > 0:
             raise Exception("Starting a formation with an agent that is already in a formation!")
-
+        
+        # Counter to keep track of saved fuel of alliance
+        if self.alliance == 1 and target_agent.alliance == 1:
+            self.model.alliance_saved_fuel += bid_value
+        
         self.model.new_formation_counter += 1
         self.model.fuel_savings_closed_deals += self.calculate_potential_fuelsavings(target_agent)
         self.deal_value += bid_value
@@ -382,15 +386,15 @@ class Flight(Agent):
     #   !!! TODO Exc. 1.3: improve calculation joining/leaving point.!!!
     # =========================================================================
     def calc_middle_point(self, a, b): #busy with this
-        w_a = a.agents_in_my_formation #weights determined by fuel reduction
-        w_b = b.agents_in_my_formation #self.model.fuel_reduction*(b.agents_in_my_formation-1)+1
-        w_c1 = w_a + w_b - 0.01
-        w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
-        if w_c1 <= w_c2:
-            w_c = w_c1
-        else:
-            w_c = w_c2
-        theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
+#        w_a = a.agents_in_my_formation #weights determined by fuel reduction
+#        w_b = b.agents_in_my_formation #self.model.fuel_reduction*(b.agents_in_my_formation-1)+1
+#        w_c1 = w_a + w_b - 0.01
+#        w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
+#        if w_c1 <= w_c2:
+#            w_c = w_c1
+#        else:
+#            w_c = w_c2
+#        theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
         return [0.5 * (a[0] + b[0]), 0.5 * (a[1] + b[1])]
 
     def distance_to_destination(self, destination):
