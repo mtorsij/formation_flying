@@ -6,6 +6,7 @@ def simple_strategy(flight, formation_target, potential_fuel_saving):
     for bid in flight.made_bids:
         if bid['bid_target'] == formation_target:
             new_bid_value = bid['value'] * 1.1
+            bid_expiration_date = bid['bid_target'].received_bids
             
             # Check if not bidding more than half
             if new_bid_value < (0.5 * potential_fuel_saving):
@@ -16,5 +17,6 @@ def simple_strategy(flight, formation_target, potential_fuel_saving):
     # If no bid has been made yet, make initial bid
     if not bid_already:
         bid_value = potential_fuel_saving * 0.15
-        
-    return bid_value
+        bid_expiration_date = 5
+    
+    return bid_value, bid_expiration_date

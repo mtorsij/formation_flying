@@ -6,15 +6,12 @@ from formation_flying.negotiations.bid_strategies.simple_strategy import simple_
 
 def do_CNP(flight):
     if not flight.departure_time:
-        raise Exception("The object passed to the greedy protocol has no departure time, therefore it seems that it is not a flight.")
+        raise Exception("The object passed to the CNP protocol has no departure time, therefore it seems that it is not a flight.")
     
     ### AUCTIONEERS ###
     if flight.accepting_bids == 0 and flight.formation_state == 0:
         # If the agent is not yet in a formation, auctioneers find managers to make bid to
         formation_targets = flight.find_greedy_candidate()
-        
-        # Set bid expiration date
-        bid_expiration_date = 3
         
         # Make bids to managers
         for formation_target in formation_targets:
@@ -23,11 +20,12 @@ def do_CNP(flight):
             
             ### BIDDING STRATEGIES
             if flight.strategy == 0:
-                bid_value = simple_strategy(flight, formation_target, potential_fuel_saving)
+                bid_value, bid_expiration_date = simple_strategy(flight, formation_target, potential_fuel_saving)
                 
             ### HERE WE CAN IMPLEMENT MORE BID STRATEGIES
 #            if flight.strategy ==1:
             
+            # Make bid with values from a bid strategy
             flight.make_bid(formation_target, bid_value, bid_expiration_date)
             
         
@@ -37,9 +35,9 @@ def do_CNP(flight):
             
             # If in alliance set reservation value lower
             if flight.alliance == 1 and bid['bidding_agent'].alliance == 1:
-                reservation_value = 10
+                reservation_value = 30
             else:
-                reservation_value = 20
+                reservation_value = 40
             
             # Check bid list
             uf = bid['value']
@@ -57,14 +55,28 @@ def do_CNP(flight):
                 else:
                     flight.received_bids.remove(bid)
             
-            # Check the expiration date (NOT WORKING)
+#            # Check the expiration date
 #            if bid['exp_date'] == 0:
-#                flight.received_bids.remove(flight.received_bids.index(bid))
+#                # Remove bid from manager received bid list
+#                flight.received_bids.remove(bid)
+#                
+#                # Same for made bid list of auctioneer
+#                for made_bid in bid['bidding_agent'].made_bids:
+#                    if made_bid['bid_target'] == flight:
+#                        bid['bidding_agent'].made_bids.remove(made_bid)
 #            else:
-#                bid['exp_date'] = bid['exp_date'] 
-        
+#                # Update expiration date in manager received bids list
+#                if bid in flight.received_bids:    
+#                    flight.received_bids[flight.received_bids.index(bid)]['exp_date'] -= 1
+#                
+#                # Do the same for the made bids list of auctioneer
+#                for i in range(len(bid['bidding_agent'].made_bids)):
+#                    if bid['bidding_agent'].made_bids[i]['bid_target'] == flight:
+#                        bid['bidding_agent'].made_bids[i]['exp_date'] -= 1
+
+                
         ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
-        if flight.manager_expiration == 4 and flight.formation_state == 0:
+        if flight.manager_expiration == 10 and flight.formation_state == 0:
             # Make other flight manager
             for bid in flight.received_bids:
                 if bid['bidding_agent'].formation_state == 0:
@@ -76,7 +88,6 @@ def do_CNP(flight):
             ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
 #            if not new_manager:
 #                
-            
             # Make current manager auctioneer
             flight.manager = 0
             flight.accepting_bids = 0
