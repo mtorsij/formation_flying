@@ -31,7 +31,6 @@ def calc_distance(p1, p2):
 
 class Flight(Agent):
 
-
     # =========================================================================
     # Create a new Flight agent.
     #
