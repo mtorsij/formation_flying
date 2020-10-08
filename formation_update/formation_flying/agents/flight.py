@@ -486,7 +486,7 @@ class Flight(Agent):
             raise Exception("Joining point != middle point")
 
         rest = dist_self % self.speed
-        regular_time = math.floor(dist_self / self.speed)
+        regular_time = floor(dist_self / self.speed)
         if rest > 0:
             time = regular_time + 1
         elif rest == 0:

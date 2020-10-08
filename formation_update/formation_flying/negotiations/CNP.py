@@ -36,7 +36,7 @@ def do_CNP(flight):
     elif flight.accepting_bids == 1:
         for bid in flight.received_bids:    
             # Calculate reservation value
-            reservation_value = 10#0.2 * (flight.calculate_potential_fuelsavings(bid['bidding_agent']))
+            reservation_value = 10 #0.2 * (flight.calculate_potential_fuelsavings(bid['bidding_agent']))
             
             # Check bid list
             uf = bid['value']  # Add alliance and possible other stuff later
