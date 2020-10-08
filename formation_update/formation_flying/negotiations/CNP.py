@@ -37,12 +37,12 @@ def do_CNP(flight):
             
             # If in alliance set reservation value lower
             if flight.alliance == 1 and bid['bidding_agent'].alliance == 1:
-                reservation_value = 5
-            else:
                 reservation_value = 10
+            else:
+                reservation_value = 20
             
             # Check bid list
-            uf = bid['value']  # Add alliance and possible other stuff later
+            uf = bid['value']
             
             # Accept bid if uf >= reservation value 
             if uf >= reservation_value:

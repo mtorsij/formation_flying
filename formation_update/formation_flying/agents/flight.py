@@ -226,7 +226,11 @@ class Flight(Agent):
 
         if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) == 0:
             raise Exception("Model isn't designed for this scenario.")
-
+        
+        # Counter to keep track of saved fuel of alliance
+        if self.alliance == 1 and target_agent.alliance == 1:
+            self.model.alliance_saved_fuel += bid_value
+        
         self.model.add_to_formation_counter += 1
         self.accepting_bids = False
 
