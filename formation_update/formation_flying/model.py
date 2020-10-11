@@ -193,7 +193,6 @@ class FormationFlying(Model):
 
         self.schedule.step()
         self.datacollector.collect(self)
-        
 
 
 

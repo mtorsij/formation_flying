@@ -28,7 +28,6 @@ def do_CNP(flight):
             # Make bid with values from a bid strategy
             flight.make_bid(formation_target, bid_value, bid_expiration_date)
             
-        
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
         for bid in flight.received_bids:    
@@ -75,27 +74,32 @@ def do_CNP(flight):
 #                        bid['bidding_agent'].made_bids[i]['exp_date'] -= 1
 
                 
-        ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
-        if flight.manager_expiration == 10 and flight.formation_state == 0:
-            # Make other flight manager
-            for bid in flight.received_bids:
-                if bid['bidding_agent'].formation_state == 0:
-                    bid['bidding_agent'].manager = 1
-                    bid['bidding_agent'].accepting_bids = 1
-                    bid['bidding_agent'].made_bids = []
-                    new_manager = True
-                    
-            ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
-#            if not new_manager:
-#              
-            
-            # Make current manager auctioneer
-            flight.manager = 0
-            flight.accepting_bids = 0
-            flight.received_bids = []
-            
-        elif flight.formation_state == 0:
-            flight.manager_expiration += 1
+#        ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
+#        if flight.formation_state == 0:
+##            print('ok')
+#            if flight.manager_expiration == 10 and flight.formation_state == 0:
+#                print('expired')
+#                # Make other flight manager
+##                for bid in flight.received_bids:
+##                    if bid['bidding_agent'].formation_state == 0:
+##                        bid['bidding_agent'].manager = 1
+##                        bid['bidding_agent'].accepting_bids = 1
+##                        bid['bidding_agent'].made_bids = []
+##    #                    new_manager = True
+##                        
+##                ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
+##    #            if not new_manager:
+##    #              
+#                # Make current manager auctioneer
+#                flight.manager = 0
+#                flight.accepting_bids = 0
+#                flight.received_bids = []
+#                
+#                print(flight.manager)
+#                print(flight.accepting_bids)
+#                
+#            elif flight.formation_state == 0:
+#                flight.manager_expiration += 1
     
                 
 

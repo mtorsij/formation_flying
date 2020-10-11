@@ -228,8 +228,8 @@ class Flight(Agent):
             raise Exception("Model isn't designed for this scenario.")
         
         # Counter to keep track of saved fuel of alliance
-        if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += bid_value
+#        ++if self.alliance == 1 and target_agent.alliance == 1:
+#            self.model.alliance_saved_fuel += bid_value
         
         self.model.add_to_formation_counter += 1
         self.accepting_bids = False
@@ -286,8 +286,9 @@ class Flight(Agent):
             raise Exception("Starting a formation with an agent that is already in a formation!")
         
         # Counter to keep track of saved fuel of alliance
-        if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += bid_value
+#        if self.alliance == 1 and target_agent.alliance == 1:
+#            print('Alliance')
+#            self.model.alliance_saved_fuel += bid_value
         
         self.model.new_formation_counter += 1
         self.model.fuel_savings_closed_deals += self.calculate_potential_fuelsavings(target_agent)
