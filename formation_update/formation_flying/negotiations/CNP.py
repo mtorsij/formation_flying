@@ -43,7 +43,7 @@ def do_CNP(flight):
             uf = bid['value']
             
             # Accept bid if uf >= reservation value 
-            if uf >= reservation_value:
+            if uf[0] >= reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
                     if flight.formation_state == 0:
                         flight.start_formation(bid['bidding_agent'], bid['value'])
