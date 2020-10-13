@@ -57,27 +57,27 @@ def do_CNP(flight):
                     flight.received_bids.remove(bid)
 
                 ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
-        if flight.formation_state == 0:
-            if flight.manager_expiration == 100 and flight.formation_state == 0:
-               
-                # Make other flight manager
-                for bid in flight.received_bids:
-                    if bid['bidding_agent'].formation_state == 0:
-                        bid['bidding_agent'].manager = 1
-                        bid['bidding_agent'].accepting_bids = 1
-                        bid['bidding_agent'].made_bids = []
-                        new_manager = True
-                        
-                ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
-#                if not new_manager:
-                
-                # Make current manager auctioneer
-#                flight.manager = 0
-                flight.accepting_bids = 0
-                flight.received_bids = []
-                
-            elif flight.formation_state == 0:
-                flight.manager_expiration += 1
+#        if flight.formation_state == 0:
+#            if flight.manager_expiration == 100 and flight.formation_state == 0:
+#               
+#                # Make other flight manager
+#                for bid in flight.received_bids:
+#                    if bid['bidding_agent'].formation_state == 0:
+#                        bid['bidding_agent'].manager = 1
+#                        bid['bidding_agent'].accepting_bids = 1
+#                        bid['bidding_agent'].made_bids = []
+#                        new_manager = True
+#                        
+#                ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
+##                if not new_manager:
+#                
+#                # Make current manager auctioneer
+##                flight.manager = 0
+#                flight.accepting_bids = 0
+#                flight.received_bids = []
+#                
+#            elif flight.formation_state == 0:
+#                flight.manager_expiration += 1
 
 #=============================================================================       
 # BID EXPIRATION CHECKER (NOT WORKING)
