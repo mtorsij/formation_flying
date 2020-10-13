@@ -21,12 +21,13 @@ def do_CNP(flight):
             ### BIDDING STRATEGIES
             if flight.strategy == 0:
                 bid_value, bid_expiration_date = simple_strategy(flight, formation_target, potential_fuel_saving)
-                
+            
             ### HERE WE CAN IMPLEMENT MORE BID STRATEGIES
 #            if flight.strategy ==1:
             
             # Make bid with values from a bid strategy
-            flight.make_bid(formation_target, bid_value, bid_expiration_date)
+            if bid_value > 0:
+                flight.make_bid(formation_target, bid_value, bid_expiration_date)
             
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
@@ -43,7 +44,7 @@ def do_CNP(flight):
             uf = bid['value']
             
             # Accept bid if uf >= reservation value 
-            if uf[0] >= reservation_value:
+            if uf >= reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
                     if flight.formation_state == 0:
                         flight.start_formation(bid['bidding_agent'], bid['value'])
@@ -71,14 +72,16 @@ def do_CNP(flight):
 #                if not new_manager:
                 
                 # Make current manager auctioneer
-#                flight.manager = 0
+                flight.manager = 0
                 flight.accepting_bids = 0
                 flight.received_bids = []
                 
             elif flight.formation_state == 0:
                 flight.manager_expiration += 1
 
-       
+#=============================================================================       
+# BID EXPIRATION CHECKER (NOT WORKING)
+#=============================================================================
 #            # Check the expiration date
 #            if bid['exp_date'] == 0:
 #                # Remove bid from manager received bid list

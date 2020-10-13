@@ -405,7 +405,7 @@ class Flight(Agent):
         # #     w_c = w_c2
         # # theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
         AB = calc_distance(a.pos, b.pos)
-        print(AB)
+#        print(AB)
         return [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
 
     def distance_to_destination(self, destination):
