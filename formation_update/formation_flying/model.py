@@ -11,7 +11,7 @@ np.seterr(all='raise')
 
 from mesa import Model
 from mesa.space import ContinuousSpace
-from mesa.time import SimultaneousActivation
+from mesa.time import StagedActivation
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 from .metrics import *
@@ -26,7 +26,7 @@ class FormationFlying(Model):
 
     # =========================================================================
     #   Create a new FormationFlying model.
-    # 
+    #
     #   Args:
     #       n_flights: Number of flights
     #       width, height: Size of the space, in kilometers.
@@ -52,7 +52,7 @@ class FormationFlying(Model):
         fuel_reduction = 0.75,
         negotiation_method = 1
     ):
-        
+
         # =====================================================================
         #   Initialize parameters, the exact values will be defined later on.
         # =====================================================================
@@ -62,11 +62,11 @@ class FormationFlying(Model):
         self.n_destination_airports = n_destination_airports
         self.vision = communication_range
         self.speed = speed
-        
+
         # The agents are activated in random order at each step, in a space that
-        # has a certain width and height and that is not toroidal 
+        # has a certain width and height and that is not toroidal
         # (which means that edges do not wrap around)
-        self.schedule = SimultaneousActivation(self)
+        self.schedule = StagedActivation(self, stage_list=["step", "advance"], shuffle=True)
         self.space = ContinuousSpace(width, height, False) 
 
         # These are values between [0,1] that limit the boundaries of the 

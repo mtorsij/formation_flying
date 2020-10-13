@@ -248,7 +248,7 @@ class Flight(Agent):
         self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
 
         involved_agents = [self]
-        for agent in self.agents_in_my_formation:
+        for agent in self.agents_in_my_formation[:]:
             involved_agents.append(agent)  # These are the current formation agents
 
         for agent in involved_agents:
@@ -345,7 +345,7 @@ class Flight(Agent):
         candidates = []
         for agent in neighbors:
             if type(agent) is Flight:
-                if agent.accepting_bids == 1:
+                if agent.formation_state == 0 or agent.formation_state == 2:
                     if not self == agent:
                         # Pass if it is the current agent
                         candidates.append(agent)
@@ -390,22 +390,21 @@ class Flight(Agent):
     #   !!! TODO Exc. 1.3: improve calculation joining/leaving point.!!!
     # =========================================================================
     def calc_middle_point(self, a, b):  # busy with this
-        # # w_a = 1/(a.agents_in_my_formation)
-        # # w_b = 1/(b.agents_in_my_formation)
-        heading_a = [a.destination[0] - a.pos[0], a.destination[1] - a.pos[1]]
-        heading_a /= np.linalg.norm(heading_a)
-        heading_b = [b.destination[0] - b.pos[0], b.destination[1] - b.pos[1]]
-        heading_b /= np.linalg.norm(heading_b)
-
-        # # w_c1 = w_a + w_b - 0.01
-        # # w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
-        # # if w_c1 <= w_c2:
-        # #     w_c = w_c1
-        # # else:
-        # #     w_c = w_c2
-        # # theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
+        formsize_a = len(a.agents_in_my_formation)+1
+        formsize_b = len(b.agents_in_my_formation)+1
         AB = calc_distance(a.pos, b.pos)
-#        print(AB)
+        # heading_a = [a.destination[0] - a.pos[0], a.destination[1] - a.pos[1]]
+        # heading_a /= np.linalg.norm(heading_a)
+        # heading_b = [b.destination[0] - b.pos[0], b.destination[1] - b.pos[1]]
+        # heading_b /= np.linalg.norm(heading_b)
+        # w_c1 = w_a + w_b - 0.01
+        # w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
+        # if w_c1 <= w_c2:
+        #     w_c = w_c1
+        # else:
+        #     w_c = w_c2
+        # theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
+        # print(theta_f)
         return [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
 
     def distance_to_destination(self, destination):
