@@ -93,6 +93,10 @@ class FormationFlying(Model):
         
         self.alliance_saved_fuel = 0
         
+        # In format {'manager': agent, 'n agents in formation': n}
+        self.formation_list = []
+        
+        
         self.origin_list = []
         self.destination_list = []
 

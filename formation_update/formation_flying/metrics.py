@@ -35,3 +35,6 @@ def add_to_formation_counter(model):
 
 def alliance_saved_fuel(model):
     return model.alliance_saved_fuel
+
+def n_agents_per_formation(model):
+    return model.formation_list

@@ -244,7 +244,12 @@ class Flight(Agent):
         # Counter to keep track of saved fuel of alliance
         if self.alliance == 1 and target_agent.alliance == 1:
             self.model.alliance_saved_fuel += bid_value
-
+        
+        # Add to formation list in correct index
+        for i in range(len(self.model.formation_list)):
+            if self.model.formation_list[i]['manager'] == self:
+                self.model.formation_list[i]['n agents in formation'] += 1
+        
         self.model.add_to_formation_counter += 1
         self.accepting_bids = False
 
@@ -302,7 +307,10 @@ class Flight(Agent):
         # Counter to keep track of saved fuel of alliance
         if self.alliance == 1 and target_agent.alliance == 1:
             self.model.alliance_saved_fuel += bid_value
-
+        
+        # Add to formation list
+        self.model.formation_list.append({'manager':self, 'n agents in formation':2})
+        
         self.model.new_formation_counter += 1
         self.model.fuel_savings_closed_deals += self.calculate_potential_fuelsavings(target_agent)
         self.deal_value += bid_value
