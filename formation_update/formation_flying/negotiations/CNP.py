@@ -17,6 +17,7 @@ def do_CNP(flight):
         for formation_target in formation_targets:
             # Calculate potential fuel saving
             potential_fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
+            print(potential_fuel_saving)
             
             ### BIDDING STRATEGIES
             if flight.strategy == 0:
