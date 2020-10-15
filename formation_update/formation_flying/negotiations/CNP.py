@@ -73,7 +73,7 @@ def do_CNP(flight):
 #                if not new_manager:
                 
                 # Make current manager auctioneer
-#                flight.manager = 0
+                flight.manager = 0
                 flight.accepting_bids = 0
                 flight.received_bids = []
                 
