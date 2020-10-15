@@ -153,32 +153,25 @@ class Flight(Agent):
     def calculate_potential_fuelsavings(self, target_agent):
         if len(self.agents_in_my_formation) == 0 and len(target_agent.agents_in_my_formation) == 0:
             joining_point = self.calc_middle_point(self.pos, target_agent.pos)
-            leaving_point = self.calc_middle_point(self.pos, target_agent.pos)
+            leaving_point = self.calc_middle_point(self.destination, target_agent.destination)
 
             original_distance = calc_distance(self.pos, self.destination) + calc_distance(target_agent.pos, target_agent.destination)
 
             # We can multiply by 2 as the joining- and leaving-points are in the middle!
             # WARNING: If you change the way the leaving- and joining-points are calculated, you should change this formula accordingly!
-            
-            joining_point = self.calc_middle_point(self.pos, target_agent.pos)
-            leaving_point = self.calc_middle_point(self.pos, target_agent.pos)
-
+         
             original_distance = calc_distance(self.pos, self.destination) + calc_distance(target_agent.pos,target_agent.destination)
 
             # We can multiply by 2 as the joining- and leaving-points are in the middle!
             # WARNING: If you change the way the leaving- and joining-points are calculated, you should change this formula accordingly!
 
-            added_distance_agent1 = calc_distance(self.pos, joining_point) + calc_distance(leaving_point,
-                                                                                          self.destination)
-            added_distance_agent2 = calc_distance(target_agent.pos, joining_point) + calc_distance(
-                target_agent.destination, leaving_point)
+            added_distance_agent1 = calc_distance(self.pos, joining_point) + calc_distance(leaving_point,self.destination)
+            added_distance_agent2 = calc_distance(target_agent.pos, joining_point) + calc_distance(target_agent.destination, leaving_point)
             formation_distance = calc_distance(leaving_point, joining_point) * 2
 
             new_total_distance = self.model.fuel_reduction * formation_distance + added_distance_agent1 + added_distance_agent2
             
-            
             fuel_savings = original_distance - new_total_distance
-            
             
         else:
             if len(self.agents_in_my_formation) > 0 and len(target_agent.agents_in_my_formation) > 0:
@@ -346,7 +339,7 @@ class Flight(Agent):
             target_agent.formation_state = 1
             self.formation_state = 1
 
-        self.leaving_point = self.calc_middle_point(self.pos, target_agent.pos)
+        self.leaving_point = self.calc_middle_point(self.destination, target_agent.destination)
         self.agents_in_my_formation.append(target_agent)
         target_agent.agents_in_my_formation.append(self)
         target_agent.leaving_point = self.leaving_point
@@ -425,7 +418,6 @@ class Flight(Agent):
         return [0.5 * (a[0] + b[0]), 0.5 * (a[1] + b[1])]
 
     def distance_to_destination(self, destination):
-        #
         return ((destination[0] - self.pos[0]) ** 2 + (destination[1] - self.pos[1]) ** 2) ** 0.5
 
     # =========================================================================
@@ -463,7 +455,6 @@ class Flight(Agent):
                 self.heading = [self.leaving_point[0] - self.pos[0], self.leaving_point[1] - self.pos[1]]
                 self.heading /= np.linalg.norm(self.heading)
                 new_pos = self.pos + self.heading * self.speed
-
 
 
             elif self.formation_state == 1 or self.formation_state == 4:

@@ -96,7 +96,6 @@ class FormationFlying(Model):
         # In format {'manager': agent, 'n agents in formation': n}
         self.formation_list = []
         
-        
         self.origin_list = []
         self.destination_list = []
 
