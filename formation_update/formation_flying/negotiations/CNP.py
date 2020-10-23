@@ -2,7 +2,7 @@
 # This file contains the function to do Contract Net Protocol (CNP). 
 # =============================================================================
 from formation_flying.negotiations.bid_strategies.simple_strategy import simple_strategy
-
+from formation_flying.negotiations.bid_strategies.acceptance_strategy import acceptace_strategy
 
 def do_CNP(flight):
     if not flight.departure_time:
@@ -31,15 +31,11 @@ def do_CNP(flight):
             
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
+        highest_bid = 0
         for bid in flight.received_bids:    
             
-#            raise Exception('ik kom toch wel hier')
-            # Set initial reservation value
-            reservation_value = 40
-            
-            # If in alliance set reservation value lower
-            if flight.alliance == 1 and bid['bidding_agent'].alliance == 1:
-                reservation_value = 30
+            # Get reservation value from the acceptance function
+            reservation_value = accecptance_strategy(flight, bid['bidding_agent'])
             
             # Check bid list
             uf = bid['value']
@@ -57,7 +53,7 @@ def do_CNP(flight):
                 else:
                     flight.received_bids.remove(bid)
 
-                ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
+        ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
         if flight.formation_state == 0:
             if flight.manager_expiration == 100 and flight.formation_state == 0:
                

@@ -172,6 +172,7 @@ class Flight(Agent):
             new_total_distance = self.model.fuel_reduction * formation_distance + added_distance_agent1 + added_distance_agent2
             
             fuel_savings = original_distance - new_total_distance
+            fuel_savings_formation = 0
             
         else:
             if len(self.agents_in_my_formation) > 0 and len(target_agent.agents_in_my_formation) > 0:
@@ -212,7 +213,7 @@ class Flight(Agent):
 
             fuel_savings = fuel_savings_joiner + fuel_savings_formation
 
-        return fuel_savings
+        return fuel_savings, joining_point, leaving_point
 
     # =========================================================================
     #   Add the chosen flight to the formation. While flying to the joining point

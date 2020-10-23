@@ -1,3 +1,7 @@
+##############################################################################
+### Simple bidding strategy for the auctioneer
+##############################################################################
+
 def simple_strategy(flight, formation_target, potential_fuel_saving):
     bid_already = False
 
