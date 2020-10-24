@@ -2,7 +2,7 @@
 # This file contains the function to do Contract Net Protocol (CNP). 
 # =============================================================================
 from formation_flying.negotiations.bid_strategies.simple_strategy import simple_strategy
-from formation_flying.negotiations.bid_strategies.acceptance_strategy import acceptace_strategy
+from formation_flying.negotiations.bid_strategies.acceptance_strategy import acceptance_strategy
 
 def do_CNP(flight):
     if not flight.departure_time:
@@ -16,7 +16,7 @@ def do_CNP(flight):
         # Make bids to managers
         for formation_target in formation_targets:
             # Calculate potential fuel saving
-            potential_fuel_saving = flight.calculate_potential_fuelsavings(formation_target)
+            potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
             ### BIDDING STRATEGIES
             if flight.strategy == 0:
@@ -31,28 +31,46 @@ def do_CNP(flight):
             
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
-        highest_bid = 0
-        for bid in flight.received_bids:    
-            
+        highest_bid_lst = []
+       
+        # Filter bids that pass the acceptance criteria
+        for bid in flight.received_bids:      
             # Get reservation value from the acceptance function
-            reservation_value = accecptance_strategy(flight, bid['bidding_agent'])
+            reservation_value, original_dist_manager, new_dist_manager = acceptance_strategy(flight, bid['bidding_agent'])
             
-            # Check bid list
-            uf = bid['value']
-                        
-            # Accept bid if uf >= reservation value 
-            if uf >= reservation_value:
+            print('value')
+            print(bid['value'])
+            print('reservation')            
+            print(reservation_value)
+            
+            # Append bid to best bid list if bid value >= reservation value 
+            if bid['value'] >= reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
-                    if flight.formation_state == 0:
-                        flight.start_formation(bid['bidding_agent'], bid['value'])
-                        break
-                        
-                    elif flight.formation_state != 0 or flight.formation_state != 4:
-                        flight.add_to_formation(bid['bidding_agent'], bid['value'])
-                        break
+                    highest_bid_lst.append([bid,original_dist_manager,new_dist_manager])
                 else:
                     flight.received_bids.remove(bid)
-
+     
+        print(highest_bid_lst)
+        
+        # Choose bid that minimizes the delay
+        min_delay = 1e6
+        best_bid = []
+        for bid in highest_bid_lst:
+            if bid[2] - bid[1] < min_delay:
+                best_bid = bid    
+        print(best_bid)
+        
+        if best_bid != []:
+            raise Exception('Niet goed genoeg')
+        
+        # Start formation or add formation with best bid agent
+#        if flight.formation_state == 0:
+#            flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])         
+#                        
+#        elif flight.formation_state != 0 or flight.formation_state != 4:
+#            flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+            
+        
         ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
         if flight.formation_state == 0:
             if flight.manager_expiration == 100 and flight.formation_state == 0:
