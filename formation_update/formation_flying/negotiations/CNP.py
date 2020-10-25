@@ -53,6 +53,7 @@ def do_CNP(flight):
                 best_bid = bid
         
         if best_bid != []:
+            print('formation')
             if best_bid[0]['bidding_agent'].formation_state != 0 and flight.formation_state != 0:
                 raise Exception('Both in formation')
         
