@@ -38,37 +38,33 @@ def do_CNP(flight):
             # Get reservation value from the acceptance function
             reservation_value, original_dist_manager, new_dist_manager = acceptance_strategy(flight, bid['bidding_agent'])
             
-            print('value')
-            print(bid['value'])
-            print('reservation')            
-            print(reservation_value)
-            
             # Append bid to best bid list if bid value >= reservation value 
             if bid['value'] >= reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
                     highest_bid_lst.append([bid,original_dist_manager,new_dist_manager])
                 else:
                     flight.received_bids.remove(bid)
-     
-        print(highest_bid_lst)
         
         # Choose bid that minimizes the delay
         min_delay = 1e6
         best_bid = []
         for bid in highest_bid_lst:
             if bid[2] - bid[1] < min_delay:
-                best_bid = bid    
-        print(best_bid)
+                best_bid = bid
         
         if best_bid != []:
-            raise Exception('Niet goed genoeg')
+            if best_bid[0]['bidding_agent'].formation_state != 0 and flight.formation_state != 0:
+                raise Exception('Both in formation')
         
         # Start formation or add formation with best bid agent
-#        if flight.formation_state == 0:
-#            flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])         
-#                        
-#        elif flight.formation_state != 0 or flight.formation_state != 4:
-#            flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+        if best_bid != []:    
+            if flight.formation_state == 0:
+                flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])         
+                
+                
+            elif flight.formation_state != 0 or flight.formation_state != 4:
+                if best_bid[0]['bidding_agent'].formation_state == 0:
+                    flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
             
         
         ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
@@ -81,7 +77,7 @@ def do_CNP(flight):
                         bid['bidding_agent'].manager = 1
                         bid['bidding_agent'].accepting_bids = 1
                         bid['bidding_agent'].made_bids = []
-                        new_manager = True
+#                        new_manager = True
                         
                 ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
 #                if not new_manager:

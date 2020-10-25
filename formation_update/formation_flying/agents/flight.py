@@ -172,10 +172,12 @@ class Flight(Agent):
             new_total_distance = self.model.fuel_reduction * formation_distance + added_distance_agent1 + added_distance_agent2
             
             fuel_savings = original_distance - new_total_distance
-            fuel_savings_formation = 0
             
         else:
             if len(self.agents_in_my_formation) > 0 and len(target_agent.agents_in_my_formation) > 0:
+                print(self.formation_state)
+                print(target_agent.formation_state)
+                
                 raise Exception("This function is not advanced enough to handle two formations joining")
 
             if len(self.agents_in_my_formation) > 0 and len(target_agent.agents_in_my_formation) == 0:
@@ -225,8 +227,9 @@ class Flight(Agent):
     #   !!! TODO Exc. 1.1: improve calculation joining/leaving point.!!!
     # =========================================================================
     def add_to_formation(self, target_agent, bid_value, discard_received_bids=True):
-        self.model.fuel_savings_closed_deals += self.calculate_potential_fuelsavings(target_agent)
-
+        fuel_saving, joining_point, leaving_point = self.calculate_potential_fuelsavings(target_agent)
+        self.model.fuel_savings_closed_deals += fuel_saving
+        
         if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) > 0:
             raise Exception(
                 "Warning, you are trying to combine multiple formations - some functions aren't ready for this ("
@@ -306,7 +309,8 @@ class Flight(Agent):
         self.model.formation_list.append({'manager':self, 'n agents in formation':2})
         
         self.model.new_formation_counter += 1
-        self.model.fuel_savings_closed_deals += self.calculate_potential_fuelsavings(target_agent)
+        fuel_saving, joining_point, leaving_point = self.calculate_potential_fuelsavings(target_agent)
+        self.model.fuel_savings_closed_deals += fuel_saving
         self.deal_value += bid_value
         target_agent.deal_value -= bid_value
 

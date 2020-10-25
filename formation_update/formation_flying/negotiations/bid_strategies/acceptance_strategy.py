@@ -22,21 +22,27 @@ def acceptance_strategy(manager, bidding_agent):
             reservation_value = delta_fuel * 1.05
             
     else:
-        total_fuelsaving, joining_point, leaving_point = bidding_agent.calculate_potential_fuelsavings(manager)
+        # Check if bidding agent is not in formation
+        if bidding_agent.formation_state == 0:
+            total_fuelsaving, joining_point, leaving_point = bidding_agent.calculate_potential_fuelsavings(manager)
+            
+            # Calculating new and original distance
+            original_dist_manager = calc_distance(manager.pos, manager.joining_point) + calc_distance(manager.joining_point, manager.leaving_point) + calc_distance(manager.leaving_point, manager.destination)
+            new_dist_manager = calc_distance(manager.pos, joining_point) + calc_distance(joining_point, leaving_point) + calc_distance(leaving_point, manager.destination)
+            
+            # Calculate fuel difference:
+            delta_fuel = new_dist_manager - original_dist_manager
+            
+            # Bid should be at least 10% above break even point
+            reservation_value = delta_fuel * 1.1
+            
+            # If in alliance set reservation value lower
+            if manager.alliance == 1 and bidding_agent.alliance == 1:
+                reservation_value = delta_fuel * 1.05
+        # If bidding agent in formation return 0    
+        else:
+            reservation_value, original_dist_manager, new_dist_manager = 0,0,0
         
-        # Calculating new and original distance
-        original_dist_manager = calc_distance(manager.pos, manager.joining_point) + calc_distance(manager.joining_point, manager.leaving_point) + calc_distance(manager.leaving_point, manager.destination)
-        new_dist_manager = calc_distance(manager.pos, joining_point) + calc_distance(joining_point, leaving_point) + calc_distance(leaving_point, manager.destination)
-        
-        # Calculate fuel difference:
-        delta_fuel = new_dist_manager - original_dist_manager
-        
-        # Bid should be at least 10% above break even point
-        reservation_value = delta_fuel * 1.1
-        
-        # If in alliance set reservation value lower
-        if manager.alliance == 1 and bidding_agent.alliance == 1:
-            reservation_value = delta_fuel * 1.05
         
     return reservation_value, original_dist_manager, new_dist_manager
 
