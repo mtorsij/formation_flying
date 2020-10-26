@@ -409,21 +409,23 @@ class Flight(Agent):
         old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]
         if j == 'j':
             dist = calc_distance(a.pos,b.pos)
-            if a.pos[0]-b.pos[0] <= 0:      #a is left and b is right of map
-                AJ = (0.5 * dist) / cos(60 * pi/180)
-                JP = [a.pos[0]+(cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
+            AJ = (0.5 * dist) / cos(60 * pi / 180)
+            if a.pos[0] - b.pos[0] < 0.0:      #a is left and b is right of map
+                JP = [a.pos[0] + (cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
+            elif a.pos[0] - b.pos[0] == 0.0:
+                JP = [a.pos[0], max(a.pos[1],b.pos[1])]
             else:
-                BJ = 0.5 * dist / cos(60 * pi / 180)
-                JP = [b.pos[0] - (cos(60 * pi / 180)*BJ), b.pos[1] + (sin(60 * pi / 180)*BJ)]
+                JP = [a.pos[0] - (cos(60 * pi / 180)*AJ), a.pos[1] + (sin(60 * pi / 180)*AJ)]
             return JP
         else:
             dist_dest = calc_distance(a.destination,b.destination)
-            if a.destination[0] - b.destination[0] <= 0:      #a is left and b is right of map
-                AL = (0.5 * dist_dest) / cos(60 * pi/180)
-                LP = [a.pos[0]-(cos(30 * pi/180)*AL), a.pos[1] + (sin(30 * pi/180))*AL]
+            AL = (0.5 * dist_dest) / sin(30 * pi / 180)
+            if a.destination[0] - b.destination[0] < 0.0:      #a is left and b is right of map
+                LP = [a.destination[0] + (cos(30 * pi/180)*AL), a.destination[1] - (sin(30 * pi/180))*AL]
+            elif a.destination[0] - b.destination[0] == 0.0:
+                LP = [a.destination[0], max(a.destination[1],b.destination[1])]
             else:
-                BL = 0.5 * dist_dest / cos(60 * pi / 180)
-                LP = [b.pos[0] + (cos(30 * pi / 180)*BL), b.pos[1] + (sin(30 * pi/180)*BL)]
+                LP = [a.destination[0] - (cos(30 * pi / 180)*AL), a.destination[1] - (sin(30 * pi/180)*AL)]
             return LP
 
     def distance_to_destination(self, destination):
