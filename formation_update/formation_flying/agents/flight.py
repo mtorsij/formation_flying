@@ -152,8 +152,8 @@ class Flight(Agent):
     # =============================================================================
     def calculate_potential_fuelsavings(self, target_agent):
         if len(self.agents_in_my_formation) == 0 and len(target_agent.agents_in_my_formation) == 0:
-            joining_point = self.calc_middle_point(self.pos, target_agent.pos)
-            leaving_point = self.calc_middle_point(self.destination, target_agent.destination)
+            joining_point = self.calc_middle_point(self, target_agent, 'j')
+            leaving_point = self.calc_middle_point(self, target_agent, 'l')
 
             original_distance = calc_distance(self.pos, self.destination) + calc_distance(target_agent.pos, target_agent.destination)
 
@@ -190,7 +190,7 @@ class Flight(Agent):
                 formation_joiner = self
                 n_agents_in_formation = len(target_agent.agents_in_my_formation) + 1
 
-            joining_point = self.calc_middle_point(formation_leader.pos, formation_joiner.pos)
+            joining_point = self.calc_middle_point(formation_leader, formation_joiner, 'j')
             leaving_point = formation_leader.leaving_point
 
             # Fuel for leader
@@ -255,7 +255,7 @@ class Flight(Agent):
             self.received_bids = []
             target_agent.made_bids = []
 
-        self.joining_point = self.calc_middle_point(self.pos, target_agent.pos)
+        self.joining_point = self.calc_middle_point(self, target_agent, 'j')
         self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
 
         involved_agents = [self]
@@ -335,7 +335,7 @@ class Flight(Agent):
             self.accepting_bids = True
 
         else:
-            self.joining_point = self.calc_middle_point(self.pos, target_agent.pos)
+            self.joining_point = self.calc_middle_point(self, target_agent, 'j')
 
             target_agent.joining_point = self.joining_point
             self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
@@ -344,7 +344,7 @@ class Flight(Agent):
             target_agent.formation_state = 1
             self.formation_state = 1
 
-        self.leaving_point = self.calc_middle_point(self.destination, target_agent.destination)
+        self.leaving_point = self.calc_middle_point(self, target_agent, 'l')
         self.agents_in_my_formation.append(target_agent)
         target_agent.agents_in_my_formation.append(self)
         target_agent.leaving_point = self.leaving_point
@@ -404,23 +404,27 @@ class Flight(Agent):
     #
     #   !!! TODO Exc. 1.3: improve calculation joining/leaving point.!!!
     # =========================================================================
-    def calc_middle_point(self, a, b):  # busy with this
-#        formsize_a = len(a.agents_in_my_formation)+1
-#        formsize_b = len(b.agents_in_my_formation)+1
-#        AB = calc_distance(a.pos, b.pos)
-        # heading_a = [a.destination[0] - a.pos[0], a.destination[1] - a.pos[1]]
-        # heading_a /= np.linalg.norm(heading_a)
-        # heading_b = [b.destination[0] - b.pos[0], b.destination[1] - b.pos[1]]
-        # heading_b /= np.linalg.norm(heading_b)
-        # w_c1 = w_a + w_b - 0.01
-        # w_c2 = 0.87 * (w_a + w_b - 1) * (1 + 0.035*(w_a + w_b - 2)) + 1
-        # if w_c1 <= w_c2:
-        #     w_c = w_c1
-        # else:
-        #     w_c = w_c2
-        # theta_f = cos((-w_a**2-w_b**2+w_c**2)/(2*w_a*w_b))**(-1)
-        # print(theta_f)
-        return [0.5 * (a[0] + b[0]), 0.5 * (a[1] + b[1])]
+    def calc_middle_point(self, a, b, j):  # busy with this
+        old = [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
+        old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]
+        if j == 'j':
+            dist = calc_distance(a.pos,b.pos)
+            if a.pos[0]-b.pos[0] <= 0:      #a is left and b is right of map
+                AJ = (0.5 * dist) / cos(60 * pi/180)
+                JP = [a.pos[0]+(cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
+            else:
+                BJ = 0.5 * dist / cos(60 * pi / 180)
+                JP = [b.pos[0] - (cos(60 * pi / 180)*BJ), b.pos[1] + (sin(60 * pi / 180)*BJ)]
+            return JP
+        else:
+            dist_dest = calc_distance(a.destination,b.destination)
+            if a.destination[0] - b.destination[0] <= 0:      #a is left and b is right of map
+                AL = (0.5 * dist_dest) / cos(60 * pi/180)
+                LP = [a.pos[0]-(cos(30 * pi/180)*AL), a.pos[1] + (sin(30 * pi/180))*AL]
+            else:
+                BL = 0.5 * dist_dest / cos(60 * pi / 180)
+                LP = [b.pos[0] + (cos(30 * pi / 180)*BL), b.pos[1] + (sin(30 * pi/180)*BL)]
+            return LP
 
     def distance_to_destination(self, destination):
         return ((destination[0] - self.pos[0]) ** 2 + (destination[1] - self.pos[1]) ** 2) ** 0.5
@@ -500,7 +504,7 @@ class Flight(Agent):
     # =========================================================================
     def calc_speed_to_joining_point(self, neighbor):
 
-        joining_point = self.calc_middle_point(self.pos, neighbor.pos)
+        joining_point = self.calc_middle_point(self, neighbor, 'j')
         dist_self = ((joining_point[0] - self.pos[0]) ** 2 + (joining_point[1] - self.pos[1]) ** 2) ** 0.5
         dist_neighbor = ((joining_point[0] - self.pos[0]) ** 2 + (joining_point[1] - self.pos[1]) ** 2) ** 0.5
 
