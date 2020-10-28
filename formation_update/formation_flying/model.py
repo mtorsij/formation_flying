@@ -50,7 +50,7 @@ class FormationFlying(Model):
         destination_airport_x = [0.7, 0.9], # same for destination airports
         destination_airport_y = [0.7, 0.9],
         fuel_reduction = 0.75,
-        negotiation_method = 1
+        negotiation_method = 0
     ):
 
         # =====================================================================
@@ -105,6 +105,7 @@ class FormationFlying(Model):
 
         self.datacollector = DataCollector(model_reporter_parameters, agent_reporter_parameters)
         
+        self.iter_step = 0
     # =========================================================================
     #  Create all flights, the flights are not all initialized at the same time,
     #  but within a departure window.
@@ -179,6 +180,8 @@ class FormationFlying(Model):
     # Define what happens in the model in each step.
     # =========================================================================
     def step(self):
+        self.iter_step += 1
+#        print(self.iter_step)
         all_arrived = True
         total_deal_value = 0
         for agent in self.schedule.agents:

@@ -5,6 +5,7 @@ from formation_flying.negotiations.bid_strategies.simple_strategy import simple_
 from formation_flying.negotiations.bid_strategies.acceptance_strategy import acceptance_strategy
 
 def do_CNP(flight):
+    
     if not flight.departure_time:
         raise Exception("The object passed to the CNP protocol has no departure time, therefore it seems that it is not a flight.")
     
@@ -32,7 +33,8 @@ def do_CNP(flight):
     ### MANAGERS ###
     elif flight.accepting_bids == 1:
         highest_bid_lst = []
-       
+        best_bid = []
+        
         # Filter bids that pass the acceptance criteria
         for bid in flight.received_bids:      
             # Get reservation value from the acceptance function
@@ -45,15 +47,32 @@ def do_CNP(flight):
                 else:
                     flight.received_bids.remove(bid)
         
-        # Choose bid that minimizes the delay
-        min_delay = 1e6
-        best_bid = []
-        for bid in highest_bid_lst:
-            if bid[2] - bid[1] < min_delay:
-                best_bid = bid
-        
+        if highest_bid_lst != []:
+            if len(highest_bid_lst) > 1:     
+                # Choose 2 bids that pass the reservation value and minimize delay
+                optimal_bid_1 = highest_bid_lst[0]
+                optimal_bid_2 = highest_bid_lst[1]
+                
+                for bid in highest_bid_lst:
+                    if bid[2] - bid[1] < optimal_bid_1[2] - optimal_bid_1[1]:
+                        optimal_bid_1 = bid
+                        continue
+                    elif bid[2] - bid[1] < optimal_bid_2[2] - optimal_bid_2[1]:
+                        optimal_bid_2 = bid
+                        continue
+            
+                # From bids that minimize delay choose the one with highest bid value
+                if optimal_bid_1[0]['value'] > optimal_bid_2[0]['value']: #and optimal_bid_1[0]['value'] > optimal_bid_3[0]['value']:
+                    best_bid = optimal_bid_1
+                
+                else:
+                    best_bid = optimal_bid_2
+            
+            # If only one bid that passes the criteria      
+            else:
+                best_bid = highest_bid_lst[0]
+                
         if best_bid != []:
-            print('formation')
             if best_bid[0]['bidding_agent'].formation_state != 0 and flight.formation_state != 0:
                 raise Exception('Both in formation')
         
@@ -61,7 +80,6 @@ def do_CNP(flight):
         if best_bid != []:    
             if flight.formation_state == 0:
                 flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])         
-                
                 
             elif flight.formation_state != 0 or flight.formation_state != 4:
                 if best_bid[0]['bidding_agent'].formation_state == 0:

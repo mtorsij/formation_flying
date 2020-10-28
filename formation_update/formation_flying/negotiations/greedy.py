@@ -21,9 +21,11 @@ def do_greedy(flight):
             
             for agent in formation_targets:
                 
-                if flight.calculate_potential_fuelsavings(agent) > 0:
+                fuel_savings, jp, lp = flight.calculate_potential_fuelsavings(agent)
+                
+                if fuel_savings > 0:
                     formation_target = agent
-                    formation_savings = flight.calculate_potential_fuelsavings(agent)
+                    formation_savings = fuel_savings
                     
                     if len(formation_target.agents_in_my_formation) > 0:
                         formation_target.add_to_formation(flight, formation_savings, discard_received_bids=True)

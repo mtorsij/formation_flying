@@ -68,7 +68,8 @@ model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used,
                            "Real saved fuel": real_fuel_saved,
                            "Deal values": total_deal_value,
                            "Alliance saved fuel": alliance_saved_fuel,
-                           "N agents per formation": n_agents_per_formation}
+                           "N agents per formation": n_agents_per_formation,
+                           "flight time": compute_total_flight_time,}
 
 # In order to collect values like "deal-value", they should be specified on all agents.
 agent_reporter_parameters={"Deal value": "deal_value"} 

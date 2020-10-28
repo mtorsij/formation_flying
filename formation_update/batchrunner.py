@@ -12,7 +12,7 @@ from formation_flying.parameters import model_params, max_steps, n_iterations, m
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
                             variable_parameters=variable_params,
-                            iterations=1,
+                            iterations=5,
                             max_steps=max_steps,
                             model_reporters=model_reporter_parameters,
                             agent_reporters=agent_reporter_parameters
@@ -25,3 +25,4 @@ run_data.head()
 
 #print((run_data["Real saved fuel"] - run_data["Total saved potential saved fuel"])/ run_data["Total Fuel Used"])
 print(run_data['Real saved fuel'])
+print(run_data['flight time'])

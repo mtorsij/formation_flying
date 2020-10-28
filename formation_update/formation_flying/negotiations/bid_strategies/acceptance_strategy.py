@@ -15,11 +15,11 @@ def acceptance_strategy(manager, bidding_agent):
         delta_fuel = new_dist_manager - original_dist_manager
         
         # Bid should be at least 10% above break even point
-        reservation_value = delta_fuel * 1.1
+        reservation_value = delta_fuel * 1.2
         
         # If in alliance set reservation value lower
         if manager.alliance == 1 and bidding_agent.alliance == 1:
-            reservation_value = delta_fuel * 1.05
+            reservation_value = delta_fuel * 1.1
             
     else:
         # Check if bidding agent is not in formation

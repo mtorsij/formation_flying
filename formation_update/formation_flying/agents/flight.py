@@ -127,7 +127,6 @@ class Flight(Agent):
     def step(self):
         if self.state == "flying":
             if self.model.negotiation_method == 0:
-                raise Exception('greedy')
                 do_greedy(self)
 
             if len(self.agents_in_my_formation) > 0 and self.formation_state == 0:
@@ -240,7 +239,7 @@ class Flight(Agent):
 
         # Counter to keep track of saved fuel of alliance
         if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += bid_value
+            self.model.alliance_saved_fuel += fuel_saving
         
         # Add to formation list in correct index
         for i in range(len(self.model.formation_list)):
@@ -300,10 +299,6 @@ class Flight(Agent):
             raise Exception("ERROR: Trying to start a formation with itself")
         if len(self.agents_in_my_formation) > 0 or len(target_agent.agents_in_my_formation) > 0:
             raise Exception("Starting a formation with an agent that is already in a formation!")
-
-        # Counter to keep track of saved fuel of alliance
-        if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += bid_value
         
         # Add to formation list
         self.model.formation_list.append({'manager':self, 'n agents in formation':2})
@@ -313,6 +308,10 @@ class Flight(Agent):
         self.model.fuel_savings_closed_deals += fuel_saving
         self.deal_value += bid_value
         target_agent.deal_value -= bid_value
+
+        # Counter to keep track of saved fuel of alliance
+        if self.alliance == 1 and target_agent.alliance == 1:
+            self.model.alliance_saved_fuel += fuel_saving
 
         self.accepting_bids = False
         self.formation_role = "manager"
@@ -416,6 +415,19 @@ class Flight(Agent):
                 JP = [a.pos[0], max(a.pos[1],b.pos[1])]
             else:
                 JP = [a.pos[0] - (cos(60 * pi / 180)*AJ), a.pos[1] + (sin(60 * pi / 180)*AJ)]
+                
+            if JP[1] > 750 or JP[0] > 750:
+                if JP[0] > 750:
+                    JP[0] = 700
+                else:
+                    JP[1] = 700
+                    
+            if JP[1] < 0 or JP[0] < 0:
+                if JP[0] < 0:
+                    JP[0] = 10
+                else:
+                    JP[1] = 10
+                    
             return JP
         else:
             dist_dest = calc_distance(a.destination,b.destination)
@@ -426,7 +438,21 @@ class Flight(Agent):
                 LP = [a.destination[0], max(a.destination[1],b.destination[1])]
             else:
                 LP = [a.destination[0] - (cos(30 * pi / 180)*AL), a.destination[1] - (sin(30 * pi/180)*AL)]
+            
+            if LP[1] > 750 or LP[0] > 750:
+                if LP[0] > 750:
+                    LP[0] = 700
+                else:
+                    LP[1] = 700
+            
+            if LP[1] < 0 or LP[0] < 0:
+                if LP[0] < 0:
+                    LP[0] = 10
+                else:
+                    LP[1] = 10            
             return LP
+        
+        
 
     def distance_to_destination(self, destination):
         return ((destination[0] - self.pos[0]) ** 2 + (destination[1] - self.pos[1]) ** 2) ** 0.5
