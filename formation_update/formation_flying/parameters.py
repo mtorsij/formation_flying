@@ -31,7 +31,6 @@
 
 from .metrics import *
 
-
 # This can be infinite, as the model should stop on its own when all agents have arrived at their destination.
 max_steps = 10000 
 
