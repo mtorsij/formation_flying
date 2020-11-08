@@ -38,3 +38,6 @@ def alliance_saved_fuel(model):
 
 def n_agents_per_formation(model):
     return model.formation_list
+
+def negotiation_method(model):
+    return model.negotiation_method

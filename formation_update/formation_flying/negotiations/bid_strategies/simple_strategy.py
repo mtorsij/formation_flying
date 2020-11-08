@@ -21,7 +21,7 @@ def simple_strategy(flight, formation_target, potential_fuel_saving):
     # If no bid has been made yet, make initial bid
     if not bid_already:
 #        print(potential_fuel_saving)
-        bid_value = potential_fuel_saving * 0.6
+        bid_value = potential_fuel_saving * 0.7
         bid_expiration_date = 5
 
     return bid_value, bid_expiration_date

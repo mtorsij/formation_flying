@@ -35,7 +35,7 @@ from .metrics import *
 max_steps = 10000 
 
 # Multiple iterations are used when running the batchrunner.py:
-n_iterations = 2
+n_iterations = 10
 
 model_params = {
     "n_flights": 50,
@@ -46,7 +46,7 @@ model_params = {
     "height": 750, # [km]
     "speed": 0.25, #[km / second]
     "fuel_reduction": 0.75, 
-    "negotiation_method": 1,
+    #"negotiation_method": 1,
     "departure_window": 3, 
     "origin_airport_x": [0.01, 0.3], 
     "origin_airport_y": [0.01, 0.3],
@@ -55,8 +55,8 @@ model_params = {
 }
 
 # To run model with a variable parameter:
-# example: variable_params = {"communication_range": [0, 100, 500]}
-variable_params = {"communication_range": [200]}
+#variable_params = {"communication_range": [0, 100, 500]}
+variable_params = {"negotiation_method": [0,1]}
 
 model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used, 
                            "steps": compute_model_steps, 
@@ -68,7 +68,8 @@ model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used,
                            "Deal values": total_deal_value,
                            "Alliance saved fuel": alliance_saved_fuel,
                            "N agents per formation": n_agents_per_formation,
-                           "flight time": compute_total_flight_time,}
+                           "flight time": compute_total_flight_time,
+                           "Negotiation method": negotiation_method,}
 
 # In order to collect values like "deal-value", they should be specified on all agents.
 agent_reporter_parameters={"Deal value": "deal_value"} 
