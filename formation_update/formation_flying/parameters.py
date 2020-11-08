@@ -35,7 +35,7 @@ from .metrics import *
 max_steps = 10000 
 
 # Multiple iterations are used when running the batchrunner.py:
-n_iterations = 10
+n_iterations = 2
 
 model_params = {
     "n_flights": 50,
