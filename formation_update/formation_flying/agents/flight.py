@@ -227,65 +227,66 @@ class Flight(Agent):
     # =========================================================================
     def add_to_formation(self, target_agent, bid_value, discard_received_bids=True):
         fuel_saving, joining_point, leaving_point = self.calculate_potential_fuelsavings(target_agent)
-        self.model.fuel_savings_closed_deals += fuel_saving
-        
-        if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) > 0:
-            raise Exception(
-                "Warning, you are trying to combine multiple formations - some functions aren't ready for this ("
-                "such as potential fuel-savings)")
-
-        if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) == 0:
-            raise Exception("Model isn't designed for this scenario.")
-
-        # Counter to keep track of saved fuel of alliance
-        if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += fuel_saving
-        
-        # Add to formation list in correct index
-        for i in range(len(self.model.formation_list)):
-            if self.model.formation_list[i]['manager'] == self:
-                self.model.formation_list[i]['n agents in formation'] += 1
-        
-        self.model.add_to_formation_counter += 1
-        self.accepting_bids = False
-
-        if discard_received_bids:
-            # Discard all bids that have been received
-            self.received_bids = []
-            target_agent.made_bids = []
-
-        self.joining_point = self.calc_middle_point(self, target_agent, 'j')
-        self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
-
-        involved_agents = [self]
-        for agent in self.agents_in_my_formation[:]:
-            involved_agents.append(agent)  # These are the current formation agents
-
-        for agent in involved_agents:
-            agent.agents_in_my_formation.append(target_agent)
-            agent.formation_state = 4
-
-        if target_agent in involved_agents:
-            raise Exception("This is not correct")
-
-        bid_receivers = bid_value / (len(
-            self.agents_in_my_formation) + 1)
-
-        self.deal_value += bid_receivers
-        for agent in self.agents_in_my_formation:
-            agent.deal_value += bid_receivers
-
-        target_agent.deal_value -= bid_value
-
-        target_agent.formation_state = 1
-
-        target_agent.agents_in_my_formation = involved_agents
-        involved_agents.append(target_agent)
-
-        for agent in involved_agents:
-            agent.joining_point = self.joining_point
-            agent.leaving_point = self.leaving_point
-            agent.speed_to_joining = self.speed_to_joining
+        if fuel_saving > 0:
+            self.model.fuel_savings_closed_deals += fuel_saving
+            
+            if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) > 0:
+                raise Exception(
+                    "Warning, you are trying to combine multiple formations - some functions aren't ready for this ("
+                    "such as potential fuel-savings)")
+    
+            if len(target_agent.agents_in_my_formation) > 0 and len(self.agents_in_my_formation) == 0:
+                raise Exception("Model isn't designed for this scenario.")
+    
+            # Counter to keep track of saved fuel of alliance
+            if self.alliance == 1 and target_agent.alliance == 1:
+                self.model.alliance_saved_fuel += fuel_saving
+            
+            # Add to formation list in correct index
+            for i in range(len(self.model.formation_list)):
+                if self.model.formation_list[i]['manager'] == self:
+                    self.model.formation_list[i]['n agents in formation'] += 1
+            
+            self.model.add_to_formation_counter += 1
+            self.accepting_bids = False
+    
+            if discard_received_bids:
+                # Discard all bids that have been received
+                self.received_bids = []
+                target_agent.made_bids = []
+    
+            self.joining_point = self.calc_middle_point(self, target_agent, 'j')
+            self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
+    
+            involved_agents = [self]
+            for agent in self.agents_in_my_formation[:]:
+                involved_agents.append(agent)  # These are the current formation agents
+    
+            for agent in involved_agents:
+                agent.agents_in_my_formation.append(target_agent)
+                agent.formation_state = 4
+    
+            if target_agent in involved_agents:
+                raise Exception("This is not correct")
+    
+            bid_receivers = bid_value / (len(
+                self.agents_in_my_formation) + 1)
+    
+            self.deal_value += bid_receivers
+            for agent in self.agents_in_my_formation:
+                agent.deal_value += bid_receivers
+    
+            target_agent.deal_value -= bid_value
+    
+            target_agent.formation_state = 1
+    
+            target_agent.agents_in_my_formation = involved_agents
+            involved_agents.append(target_agent)
+    
+            for agent in involved_agents:
+                agent.joining_point = self.joining_point
+                agent.leaving_point = self.leaving_point
+                agent.speed_to_joining = self.speed_to_joining
 
     # =========================================================================
     #   The value of the bid is added to the "deal value" of the manager,
@@ -299,54 +300,57 @@ class Flight(Agent):
             raise Exception("ERROR: Trying to start a formation with itself")
         if len(self.agents_in_my_formation) > 0 or len(target_agent.agents_in_my_formation) > 0:
             raise Exception("Starting a formation with an agent that is already in a formation!")
-        
-        # Add to formation list
-        self.model.formation_list.append({'manager':self, 'n agents in formation':2})
-        
-        self.model.new_formation_counter += 1
+    
         fuel_saving, joining_point, leaving_point = self.calculate_potential_fuelsavings(target_agent)
-        self.model.fuel_savings_closed_deals += fuel_saving
-        self.deal_value += bid_value
-        target_agent.deal_value -= bid_value
-
-        # Counter to keep track of saved fuel of alliance
-        if self.alliance == 1 and target_agent.alliance == 1:
-            self.model.alliance_saved_fuel += fuel_saving
-
-        self.accepting_bids = False
-        self.formation_role = "manager"
-        target_agent.formation_role = "slave"
-
-        # You can use the following error message if you want to ensure that managers can only start formations with
-        # auctioneers. The code itself has no functionality, but is a "check"
-
-        # if not self.manager and target_agent.auctioneer:
-        #   raise Exception("Something is going wrong")
-
-        if discard_received_bids:
-            self.received_bids = []
-            target_agent.made_bids = []
-
-        if self.distance_to_destination(target_agent.pos) < 0.001:
-            # Edge case where agents are at the same spot.
-            self.formation_state = 2
-            target_agent.formation_state = 2
-            self.accepting_bids = True
-
-        else:
-            self.joining_point = self.calc_middle_point(self, target_agent, 'j')
-
-            target_agent.joining_point = self.joining_point
-            self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
-            target_agent.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
-
-            target_agent.formation_state = 1
-            self.formation_state = 1
-
-        self.leaving_point = self.calc_middle_point(self, target_agent, 'l')
-        self.agents_in_my_formation.append(target_agent)
-        target_agent.agents_in_my_formation.append(self)
-        target_agent.leaving_point = self.leaving_point
+        
+        if fuel_saving > 0:
+            # Add to formation list
+            self.model.formation_list.append({'manager':self, 'n agents in formation':2})
+            
+            self.model.new_formation_counter += 1    
+            
+            self.model.fuel_savings_closed_deals += fuel_saving
+            self.deal_value += bid_value
+            target_agent.deal_value -= bid_value
+    
+            # Counter to keep track of saved fuel of alliance
+            if self.alliance == 1 and target_agent.alliance == 1:
+                self.model.alliance_saved_fuel += fuel_saving
+    
+            self.accepting_bids = False
+            self.formation_role = "manager"
+            target_agent.formation_role = "slave"
+    
+            # You can use the following error message if you want to ensure that managers can only start formations with
+            # auctioneers. The code itself has no functionality, but is a "check"
+    
+            # if not self.manager and target_agent.auctioneer:
+            #   raise Exception("Something is going wrong")
+    
+            if discard_received_bids:
+                self.received_bids = []
+                target_agent.made_bids = []
+    
+            if self.distance_to_destination(target_agent.pos) < 0.001:
+                # Edge case where agents are at the same spot.
+                self.formation_state = 2
+                target_agent.formation_state = 2
+                self.accepting_bids = True
+    
+            else:
+                self.joining_point = self.calc_middle_point(self, target_agent, 'j')
+    
+                target_agent.joining_point = self.joining_point
+                self.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
+                target_agent.speed_to_joining = self.calc_speed_to_joining_point(target_agent)
+    
+                target_agent.formation_state = 1
+                self.formation_state = 1
+    
+            self.leaving_point = self.calc_middle_point(self, target_agent, 'l')
+            self.agents_in_my_formation.append(target_agent)
+            target_agent.agents_in_my_formation.append(self)
+            target_agent.leaving_point = self.leaving_point
 
     # =============================================================================
     #   This function finds the agents to make a bid to, and returns a list of these agents.

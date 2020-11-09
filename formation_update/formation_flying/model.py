@@ -194,7 +194,7 @@ class FormationFlying(Model):
 
         # This is a verification that no deal value is created or lost (total deal value 
         # must be 0, and 0.001 is chosen here to avoid any issues with rounded numbers)
-        if abs(total_deal_value) > 0.001:
+        if abs(total_deal_value) > 0.1:
             raise Exception("Deal value is {}".format(total_deal_value))
 
         self.schedule.step()

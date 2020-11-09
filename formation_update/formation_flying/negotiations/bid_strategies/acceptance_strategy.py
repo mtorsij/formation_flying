@@ -14,13 +14,16 @@ def acceptance_strategy(manager, bidding_agent):
         # Calculate fuel difference:
         delta_fuel = new_dist_manager - original_dist_manager
         
-        # Bid should be at least 10% above break even point
-        reservation_value = delta_fuel * 1.2
-        
-        # If in alliance set reservation value lower
-        if manager.alliance == 1 and bidding_agent.alliance == 1:
+        if delta_fuel > 1:
+            # Bid should be at least 10% above break even point
             reservation_value = delta_fuel * 1.1
             
+            # If in alliance set reservation value lower
+            if manager.alliance == 1 and bidding_agent.alliance == 1:
+                reservation_value = delta_fuel * 1.05
+        
+        else:
+            reservation_value, original_dist_manager, new_dist_manager = 1e20,0,0
     else:
         # Check if bidding agent is not in formation
         if bidding_agent.formation_state == 0:
@@ -33,15 +36,20 @@ def acceptance_strategy(manager, bidding_agent):
             # Calculate fuel difference:
             delta_fuel = new_dist_manager - original_dist_manager
             
-            # Bid should be at least 10% above break even point
-            reservation_value = delta_fuel * 1.1
-            
-            # If in alliance set reservation value lower
-            if manager.alliance == 1 and bidding_agent.alliance == 1:
+            if delta_fuel > 1: 
+                # Bid should be at least 10% above break even point
                 reservation_value = delta_fuel * 1.05
+                
+                # If in alliance set reservation value lower
+                if manager.alliance == 1 and bidding_agent.alliance == 1:
+                    reservation_value = delta_fuel
+            
+            else:
+                reservation_value, original_dist_manager, new_dist_manager = 1e20,0,0
+                
         # If bidding agent in formation return 0    
         else:
-            reservation_value, original_dist_manager, new_dist_manager = 0,0,0
+            reservation_value, original_dist_manager, new_dist_manager = 1e20,0,0
         
         
     return reservation_value, original_dist_manager, new_dist_manager

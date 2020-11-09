@@ -41,13 +41,15 @@ def do_CNP(flight):
             reservation_value, original_dist_manager, new_dist_manager = acceptance_strategy(flight, bid['bidding_agent'])
             
             # Append bid to best bid list if bid value >= reservation value 
-            if bid['value'] >= reservation_value:
+            if bid['value'] > reservation_value:
                 if bid['bidding_agent'].formation_state == 0:
                     highest_bid_lst.append([bid,original_dist_manager,new_dist_manager])
                 else:
                     flight.received_bids.remove(bid)
-        
+            
         if highest_bid_lst != []:
+#            print(highest_bid_lst)
+            
             if len(highest_bid_lst) > 1:     
                 # Choose 2 bids that pass the reservation value and minimize delay
                 optimal_bid_1 = highest_bid_lst[0]
@@ -78,13 +80,15 @@ def do_CNP(flight):
         
         # Start formation or add formation with best bid agent
         if best_bid != []:    
-            if flight.formation_state == 0:
-                flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])         
-                
-            elif flight.formation_state != 0 or flight.formation_state != 4:
-                if best_bid[0]['bidding_agent'].formation_state == 0:
-                    flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
-            
+            if best_bid[0]['value'] > 0:
+                if flight.formation_state == 0:
+                    flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+                    
+                elif flight.formation_state != 0 or flight.formation_state != 4:
+                    if best_bid[0]['bidding_agent'].formation_state == 0:
+                        flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+                        
+        flight.received_bids = []
         
         ### MAKE OTHER AGENT MANAGER IF CURRENT MANAGER HAS NOT MADE FORMATION FOR N STEPS
         if flight.formation_state == 0:

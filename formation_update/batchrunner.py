@@ -10,7 +10,7 @@ from formation_flying.parameters import model_params, max_steps, n_iterations, m
 from matplotlib import pyplot as plt
 import numpy as np
 
-iterations = 2
+iterations = 20
 
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
@@ -27,8 +27,6 @@ run_data = batch_run.get_model_vars_dataframe()
 run_data.head()
 
 #print((run_data["Real saved fuel"] - run_data["Total saved potential saved fuel"])/ run_data["Total Fuel Used"])
-#print(run_data['Real saved fuel'])
-#print(run_data['flight time'])
 
 # SPLIT DATA
 ## Total fuel used per km
@@ -46,14 +44,6 @@ split_alliance_savings_data = np.array_split(run_data['Alliance saved fuel'], 2)
 split_n_formations_data = np.array_split(run_data['new formations'], 2)
 
 # PLOT DATA
-## Total fuel used per km
-#plt.figure()
-#plt.bar(np.arange(1,(iterations+1)) - 0.05, split_spec_fuel_data[0], width=0.1, label='Greedy algorithm')
-#plt.bar(np.arange(1,(iterations+1)) + 0.05, split_spec_fuel_data[1], width=0.1, label='CNP algorithm')
-#plt.xlabel('Iteration')
-#plt.ylabel('Fuel used per kilometer[kg/km]')
-#plt.legend()
-
 # Fuel saved per kilometer comparison
 plt.figure()
 plt.bar(np.arange(1,(iterations+1)) - 0.05, split_spec_fuel_save_data[0], width=0.1, label='Greedy algorithm')
@@ -80,3 +70,11 @@ plt.xlabel('Iteration')
 plt.ylabel('Number of formations')
 plt.title('Number of formations comparison')
 plt.legend()
+
+## Total fuel used per km
+#plt.figure()
+#plt.bar(np.arange(1,(iterations+1)) - 0.05, split_spec_fuel_data[0], width=0.1, label='Greedy algorithm')
+#plt.bar(np.arange(1,(iterations+1)) + 0.05, split_spec_fuel_data[1], width=0.1, label='CNP algorithm')
+#plt.xlabel('Iteration')
+#plt.ylabel('Fuel used per kilometer[kg/km]')
+#plt.legend()
