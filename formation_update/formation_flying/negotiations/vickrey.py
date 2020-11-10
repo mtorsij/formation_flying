@@ -15,7 +15,7 @@ def do_Vickrey(flight):
             # Calculate potential fuel saving
             potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
-            # Bid_value
+            # Bid generator function
             bid_value = 0.8 * potential_fuel_saving
             
             if bid_value > 0:
