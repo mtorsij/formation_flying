@@ -46,17 +46,18 @@ model_params = {
     "height": 750, # [km]
     "speed": 0.3, #[km / second]
     "fuel_reduction": 0.75, 
-#    "negotiation_method": 1,
+    "negotiation_method": 1,
     "departure_window": 3, 
-    "origin_airport_x": [0.01, 0.3], 
-    "origin_airport_y": [0.01, 0.3],
-    "destination_airport_x": [0.7, 0.99], 
-    "destination_airport_y": [0.7, 0.99],
+    "origin_airport_x": [0.01, 0.3],  #[0, 0.1], [0, 0.2], [0, 0.3]
+    "origin_airport_y": [0.01, 0.3],  # [0, 0.1], [0, 0.2], [0, 0.3]
+    "destination_airport_x": [0.7, 0.99],  # [0.9, 1], [0.8, 1], [0.7, 1]
+    "destination_airport_y": [0.7, 0.99],  # [0.9, 1], [0.8, 1], [0.7, 1]
 }
 
 # To run model with a variable parameter:
 #variable_params = {"communication_range": [50, 200, 500]}
-variable_params = {"negotiation_method": [3]}
+variable_params = {"negotiation_method": [1]}
+
 
 model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used, 
                            "steps": compute_model_steps, 
@@ -69,7 +70,9 @@ model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used,
                            "Alliance saved fuel": alliance_saved_fuel,
                            "N agents per formation": n_agents_per_formation,
                            "flight time": compute_total_flight_time,
-                           "Negotiation method": negotiation_method,}
+                           "Negotiation method": negotiation_method,
+                           "Formation timeline start": formation_timeline_start,
+                           }
 
 # In order to collect values like "deal-value", they should be specified on all agents.
 agent_reporter_parameters={"Deal value": "deal_value"} 

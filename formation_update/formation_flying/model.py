@@ -95,6 +95,7 @@ class FormationFlying(Model):
         
         # In format {'manager': agent, 'n agents in formation': n}
         self.formation_list = []
+        self.n_formation_list = [0]
         
         self.origin_list = []
         self.destination_list = []
@@ -180,8 +181,13 @@ class FormationFlying(Model):
     # Define what happens in the model in each step.
     # =========================================================================
     def step(self):
+        # Steps taken
         self.iter_step += 1
 #        print(self.iter_step)
+        
+        # Add to current amount of formation list
+        self.n_formation_list.append(self.new_formation_counter)
+        
         all_arrived = True
         total_deal_value = 0
         for agent in self.schedule.agents:

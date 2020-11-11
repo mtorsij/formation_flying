@@ -41,3 +41,7 @@ def n_agents_per_formation(model):
 
 def negotiation_method(model):
     return model.negotiation_method
+
+def formation_timeline_start(model):
+    return model.n_formation_list[0:50]
+    
