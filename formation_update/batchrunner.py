@@ -13,6 +13,7 @@ import numpy as np
 # Choose what has to be compared
 greedy_comp = False
 vision_comp = False
+auction_comp = False
 
 airport_pos_comp = True
 # PLot data of all three runs
@@ -21,7 +22,7 @@ second = False
 third = False
 plot_all = True
 
-
+# Number of iterations
 iterations = 1
 
 batch_run = BatchRunner(FormationFlying,
@@ -37,8 +38,6 @@ batch_run.run_all()
 
 run_data = batch_run.get_model_vars_dataframe()
 run_data.head()
-
-#print((run_data["Real saved fuel"] - run_data["Total saved potential saved fuel"])/ run_data["Total Fuel Used"])
 
 #-----------------------------------------------------------------------------
 ### GREEDY COMPARISON
@@ -119,7 +118,7 @@ if vision_comp:
     split_n_formations_data[1] = sum(split_n_formations_data[1]) / iterations
     split_n_formations_data[2] = sum(split_n_formations_data[2]) / iterations
     
-#   Total distance flown
+     # Total distance flown
     split_dist_data = np.array_split(run_data['flight_time'], 3)
     split_dist_data[0] = sum(split_dist_data[0]) / iterations
     split_dist_data[1] = sum(split_dist_data[1]) / iterations
@@ -203,4 +202,59 @@ if airport_pos_comp:
 #-----------------------------------------------------------------------------
 ### AUCTION METHOD COMPARISON
 #-----------------------------------------------------------------------------
+if auction_comp:
+    # SPLIT DATA
+    # Fuel saved per km
+    spec_fuel_save_data = run_data['Real saved fuel'] / run_data['flight time']
+    split_spec_fuel_save_data = np.array_split(spec_fuel_save_data, 3)
+    
+    split_spec_fuel_save_data[0] = sum(split_spec_fuel_save_data[0]) / iterations
+    split_spec_fuel_save_data[1] = sum(split_spec_fuel_save_data[1]) / iterations
+    split_spec_fuel_save_data[2] = sum(split_spec_fuel_save_data[2]) / iterations
+    
+     # Number of formations
+    split_n_formations_data = np.array_split(run_data['new formations'], 3)
+    split_n_formations_data[0] = sum(split_n_formations_data[0]) / iterations
+    split_n_formations_data[1] = sum(split_n_formations_data[1]) / iterations
+    split_n_formations_data[2] = sum(split_n_formations_data[2]) / iterations
+    
+     # Total distance flown
+    split_dist_data = np.array_split(run_data['flight_time'], 3)
+    split_dist_data[0] = sum(split_dist_data[0]) / iterations
+    split_dist_data[1] = sum(split_dist_data[1]) / iterations
+    split_dist_data[2] = sum(split_dist_data[2]) / iterations
+    
+    # PLOT DATA
+    # Fuel saved per kilometer comparison
+    plt.figure()
+    plt.bar(0.7, split_spec_fuel_save_data[0], width=0.3, label='English')
+    plt.bar(1, split_spec_fuel_save_data[1], width=0.3, label='Vickrey')
+    plt.bar(1.3, split_spec_fuel_save_data[2], width=0.3, label='Japanese')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fuel saved per kilometer [kg/km]')
+    plt.title('Fuel saved per kilometer comparison')
+    plt.legend()
+
+    # Fuel saved per kilometer comparison
+    plt.figure()
+    plt.bar(0.7, split_n_formations_data[0], width=0.3, label='English')
+    plt.bar(1, split_n_formations_data[1], width=0.3, label='Vickrey')
+    plt.bar(1.3, split_n_formations_data[2], width=0.3, label='Japanese')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fuel saved per kilometer [kg/km]')
+    plt.title('Fuel saved per kilometer comparison')
+    plt.legend()
+    
+    # Fuel saved per kilometer comparison
+    plt.figure()
+    plt.bar( 0.7, split_dist_data[0], width=0.3, label='English')
+    plt.bar( 1, split_dist_data[1], width=0.3, label='Vickrey')
+    plt.bar( 1.3 , split_dist_data[2], width=0.3, label='Japanese')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fuel saved per kilometer [kg/km]')
+    plt.title('Fuel saved per kilometer comparison')
+    plt.legend()
+    
+
+
     
