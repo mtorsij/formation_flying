@@ -14,8 +14,6 @@ def do_Vickrey(flight):
         
         # Make bids to managers
         for formation_target in formation_targets:
-            # Calculate potential fuel saving
-            potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
             # Bid generator function
             bid_value = true_value_strategy(flight, formation_target)

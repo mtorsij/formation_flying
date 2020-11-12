@@ -17,7 +17,7 @@ def do_Japanese(flight):
             # Personal max
             max_bid_value = true_value_strategy(flight, formation_target)
             
-            # Make sure that agent only once enters an auction
+            # Make sure that agent only enters an auction once
             already_entered = False                
             
             if formation_target.agents_in_auction == [] and formation_target.current_price < max_bid_value:
@@ -38,7 +38,7 @@ def do_Japanese(flight):
                         
                 # If the agent already exited the auction it cannot enter again
                 elif agent['agent'] == flight and agent['state'] == 'exit auction':
-                    # The agent already entered and exited the auction
+                    # The agent already entered
                     already_entered = True
                 
             # If the agent has not entered the auction yet and the current price is below the personal max
@@ -72,7 +72,7 @@ def do_Japanese(flight):
             # Reset current price based on number of agents in formation and adjust price increase per step
             if len(flight.agents_in_my_formation) > 2:
                 flight.current_price = 50
-                flight.price_increase = 15
+                flight.price_increase = 10
             else:
                 flight.current_price = 80
                 flight.price_increase = 20
