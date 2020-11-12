@@ -20,8 +20,10 @@ def do_Japanese(flight):
             max_bid_value = true_value_strategy(flight, formation_target)
             
             for agent in formation_target.agents_in_auction:
+               
                 # Check if agent is in the auction and is participating
                 if agent['agent'] == flight and agent['state'] == 'in auction':
+                    
                     # If the current price is higher than personal max -> exit auction
                     if formation_target.current_price > max_bid_value:
                         formation_target.agents_in_auction[formation_target.agents_in_auction.index(agent)]['state'] = 'exit auction'
@@ -46,6 +48,7 @@ def do_Japanese(flight):
         
         # If one flight remains, pick the winner and start formation
         if flights_in_auction_counter == 1:
+            
             # Find the winner
             for agent in flight.agents_in_auction:
                 if agent['state'] == 'in auction':
