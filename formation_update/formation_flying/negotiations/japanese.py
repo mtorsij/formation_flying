@@ -6,7 +6,7 @@
 from formation_flying.negotiations.bid_strategies.true_value_strategy import true_value_strategy
 
 def do_Japanese(flight):
-     ### AUCTIONEERS ###
+    ### AUCTIONEERS ###
     if flight.accepting_bids == 0 and flight.formation_state == 0:
         # If the agent is not yet in a formation, auctioneers find managers to make bid to
         formation_targets = flight.find_greedy_candidate()
