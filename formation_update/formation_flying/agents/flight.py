@@ -172,7 +172,7 @@ class Flight(Agent):
          
             original_distance = calc_distance(self.pos, self.destination) + calc_distance(target_agent.pos,target_agent.destination)
 
-            # We can multiply by 2 as the joining- and leaving-points are in the middle!
+            # We can separately add the distances made flown by the aircraft
             # WARNING: If you change the way the leaving- and joining-points are calculated, you should change this formula accordingly!
 
             added_distance_agent1 = calc_distance(self.pos, joining_point) + calc_distance(leaving_point,self.destination)
@@ -180,9 +180,8 @@ class Flight(Agent):
             formation_distance = calc_distance(leaving_point, joining_point) * 2
 
             new_total_distance = self.model.fuel_reduction * formation_distance + added_distance_agent1 + added_distance_agent2
-            
             fuel_savings = original_distance - new_total_distance
-            
+
         else:
             if len(self.agents_in_my_formation) > 0 and len(target_agent.agents_in_my_formation) > 0:
                 print(self.formation_state)
