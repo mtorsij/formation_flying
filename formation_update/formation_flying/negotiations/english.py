@@ -3,7 +3,7 @@
 # This file contains the function to do an English auction. 
 # =============================================================================
 '''
-from formation_flying.negotiations.bid_strategies.true_value_strategyv import true_value_strategy
+from formation_flying.negotiations.bid_strategies.true_value_strategy import true_value_strategy
 
 def do_English(flight):
     ### AUCTIONEERS ###

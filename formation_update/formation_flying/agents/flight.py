@@ -117,6 +117,7 @@ class Flight(Agent):
         # Japanese method agents in autcion
         self.agents_in_auction = []
         self.current_price = 100
+        self.price_increase = 20
         
         self.manager = self.model.random.choice([0, 1])
         if self.manager:

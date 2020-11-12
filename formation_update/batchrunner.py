@@ -55,7 +55,7 @@ if greedy_comp:
     split_n_formations_data = np.array_split(run_data['new formations'], 2)
     
     # Total distance flown
-    split_dist_data = np.array_split(run_data['flight_time'], 2)
+    split_dist_data = np.array_split(run_data['flight time'], 2)
     
     # PLOT DATA
     # Fuel saved per kilometer comparison

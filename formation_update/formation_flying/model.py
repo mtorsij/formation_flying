@@ -182,8 +182,10 @@ class FormationFlying(Model):
     # =========================================================================
     def step(self):
         # Steps taken
-        self.iter_step += 1
+#        self.iter_step += 1
 #        print(self.iter_step)
+        
+#        print(self.new_formation_counter)
         
         # Add to current amount of formation list
         self.n_formation_list.append(self.new_formation_counter)
