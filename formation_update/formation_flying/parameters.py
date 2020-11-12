@@ -56,7 +56,7 @@ model_params = {
 
 # To run model with a variable parameter:
 #variable_params = {"communication_range": [50, 200, 500]}
-variable_params = {"negotiation_method": [1]}
+variable_params = {"negotiation_method": [4]}
 
 
 model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used, 

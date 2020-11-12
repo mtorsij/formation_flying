@@ -21,6 +21,7 @@ from ..negotiations.greedy import do_greedy
 from ..negotiations.CNP import do_CNP  # !!! Don't forget the others.
 from ..negotiations.english import do_English
 from ..negotiations.vickrey import do_Vickrey
+from ..negotiations.japanese import do_Japanese
 
 from math import *
 
@@ -112,7 +113,11 @@ class Flight(Agent):
         self.received_bids = []
         self.made_bids = []
         self.manager_expiration = 0
-
+        
+        # Japanese method agents in autcion
+        self.agents_in_auction = []
+        self.current_price = 100
+        
         self.manager = self.model.random.choice([0, 1])
         if self.manager:
             self.accepting_bids = 1
@@ -145,8 +150,8 @@ class Flight(Agent):
                 do_English(self)
             if self.model.negotiation_method == 3:
                 do_Vickrey(self)
-            # if self.model.negotiation_method == 4:
-            #     do_Japanese(self)
+            if self.model.negotiation_method == 4:
+                do_Japanese(self)
 
     # =============================================================================
     #   This formula assumes that the route of both agents are of same length,

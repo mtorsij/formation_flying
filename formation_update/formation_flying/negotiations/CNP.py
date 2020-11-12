@@ -55,6 +55,7 @@ def do_CNP(flight):
                 optimal_bid_1 = highest_bid_lst[0]
                 optimal_bid_2 = highest_bid_lst[1]
                 
+                # Find two bids that minimize delay the most
                 for bid in highest_bid_lst:
                     if bid[2] - bid[1] < optimal_bid_1[2] - optimal_bid_1[1]:
                         optimal_bid_1 = bid
@@ -78,7 +79,7 @@ def do_CNP(flight):
             if best_bid[0]['bidding_agent'].formation_state != 0 and flight.formation_state != 0:
                 raise Exception('Both in formation')
         
-        # Start formation or add formation with best bid agent
+        # Start formation or add formation, depending on state of manager, with best bid agent
         if best_bid != []:    
             if best_bid[0]['value'] > 0:
                 if flight.formation_state == 0:

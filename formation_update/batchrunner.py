@@ -15,12 +15,12 @@ greedy_comp = False
 vision_comp = False
 auction_comp = False
 
-airport_pos_comp = True
+airport_pos_comp = False
 # PLot data of all three runs
 first = False
 second = False
 third = False
-plot_all = True
+plot_all = False
 
 # Number of iterations
 iterations = 1
