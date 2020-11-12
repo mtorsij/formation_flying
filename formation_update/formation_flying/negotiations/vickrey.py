@@ -4,6 +4,8 @@
 # =============================================================================
 '''
 
+from formation_flying.negotiations.bid_strategies.true_value_strategy import true_value_strategy
+
 def do_Vickrey(flight):
     ### AUCTIONEERS ###
     if flight.accepting_bids == 0 and flight.formation_state == 0:
@@ -16,7 +18,7 @@ def do_Vickrey(flight):
             potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
             # Bid generator function
-            bid_value = 0.8 * potential_fuel_saving
+            bid_value = true_value_strategy(flight, formation_target)
             
             if bid_value > 0:
                 # Make bid

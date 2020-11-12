@@ -3,6 +3,7 @@
 # This file contains the function to do an English auction. 
 # =============================================================================
 '''
+from formation_flying.negotiations.bid_strategies.true_value_strategyv import true_value_strategy
 
 def do_English(flight):
     ### AUCTIONEERS ###
@@ -16,7 +17,7 @@ def do_English(flight):
             potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
             # Personal max
-            max_bid_value = 0.8 * potential_fuel_saving
+            max_bid_value = true_value_strategy(flight, formation_target)
             
             # If no bids have been made to manager so far, make first bid
             if len(formation_target.received_bids) == 0:

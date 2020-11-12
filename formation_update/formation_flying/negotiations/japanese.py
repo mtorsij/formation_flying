@@ -3,6 +3,7 @@
 # This file contains the function to do a Japanese auction. 
 # =============================================================================
 '''
+from formation_flying.negotiations.bid_strategies.true_value_strategy import true_value_strategy
 
 def do_Japanese(flight):
      ### AUCTIONEERS ###
@@ -16,7 +17,7 @@ def do_Japanese(flight):
             potential_fuel_saving, joining_point, leaving_point  = flight.calculate_potential_fuelsavings(formation_target)
             
             # Personal max
-            max_bid_value = 0.8 * potential_fuel_saving
+            max_bid_value = true_value_strategy(flight, formation_target)
             
             for agent in formation_target.agents_in_auction:
                 # Check if agent is in the auction and is participating
