@@ -35,7 +35,7 @@ def do_English(flight):
         if flight.received_bids != []:        
             
             # If current highest is highest from last round -> formation
-            if flight.highest_bidding_agent == flight.received_bids[0]['bidding_agent']:
+            if flight.highest_bidding_agent[0] == flight.received_bids[0]['bidding_agent'] and flight.highest_bidding_agent[1] == flight.received_bids[0]['value']:
                 # Check if flight is already in formation
                 if flight.formation_state == 0:
                     if flight.received_bids[0]['bidding_agent'].formation_state == 0:    
@@ -51,5 +51,5 @@ def do_English(flight):
             
             # Update current highest bidding agent
             else:
-                flight.highest_bidding_agent = flight.received_bids[0]['bidding_agent']
+                flight.highest_bidding_agent = [flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value']]
             

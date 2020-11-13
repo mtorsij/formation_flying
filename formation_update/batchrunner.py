@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 # Choose what has to be compared
-greedy_comp = False
+greedy_comp = True
 vision_comp = False
 auction_comp = False
 
@@ -24,7 +24,7 @@ third = False
 plot_all = False
 
 # Number of iterations
-iterations = 1
+iterations = 3
 
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
@@ -67,6 +67,7 @@ if greedy_comp:
     plt.ylabel('Fuel saved per kilometer [kg/km]')
     plt.title('Fuel saved per kilometer comparison')
     plt.legend()
+    plt.savefig('figures/greedy_fuel_save_comp')
     
     # Fuel saved by the alliance comparison
     plt.figure()
@@ -76,6 +77,7 @@ if greedy_comp:
     plt.ylabel('Fuel saved by alliance [kg]')
     plt.title('Fuel saved by the alliance comparison')
     plt.legend()
+    plt.savefig('figures/greedy_alliance_comp')
     
     # Number of formations comparison
     plt.figure()
@@ -85,6 +87,7 @@ if greedy_comp:
     plt.ylabel('Number of formations')
     plt.title('Number of formations comparison')
     plt.legend()
+    plt.savefig('figures/greedy_n_formations_comp')
     
     # Total distance flown
     plt.figure()
@@ -94,14 +97,15 @@ if greedy_comp:
     plt.ylabel('Total distance flown [km]')
     plt.title('Total distance flown comparison')
     plt.legend()
-
+    plt.savefig('figures/greedy_dist_comp')
+    
 #-----------------------------------------------------------------------------
 ### VISION COMPARISON
 #-----------------------------------------------------------------------------
 if vision_comp:
     # SPLIT AND AVERAGE DATA
     # Fuel saved per km
-    spec_fuel_save_data = (run_data['Real saved fuel'] / run_data['flight time'])
+    spec_fuel_save_data = (run_data['Real saved fuel'])
     split_spec_fuel_save_data = np.array_split(spec_fuel_save_data, 3)
     split_spec_fuel_save_data[0] = sum(split_spec_fuel_save_data[0]) / iterations
     split_spec_fuel_save_data[1] = sum(split_spec_fuel_save_data[1]) / iterations
@@ -120,7 +124,7 @@ if vision_comp:
     split_n_formations_data[2] = sum(split_n_formations_data[2]) / iterations
     
      # Total distance flown
-    split_dist_data = np.array_split(run_data['flight_time'], 3)
+    split_dist_data = np.array_split(run_data['flight time'], 3)
     split_dist_data[0] = sum(split_dist_data[0]) / iterations
     split_dist_data[1] = sum(split_dist_data[1]) / iterations
     split_dist_data[2] = sum(split_dist_data[2]) / iterations
@@ -128,24 +132,39 @@ if vision_comp:
     # PLOT DATA
     # Fuel saved per kilometer comparison
     plt.figure()
+#    plt.errorbar([50,200,500], y, e, linestyle='None', marker='^')
     plt.plot([50,200,500], split_spec_fuel_save_data, marker='o', color='b')
     plt.xlabel('Communication range [km]')
     plt.ylabel('Fuel saved per kilometer [kg/km]')
     plt.title('Fuel saved per kilometer comparison')
+    plt.savefig('figures/vis_fuel_saved_comp')
 
     # Fuel saved by the alliance comparison
     plt.figure()
+#    plt.errorbar(x, y, e, linestyle='None', marker='^')
     plt.plot([50,200,500], split_alliance_savings_data, marker='o', color='b')
     plt.xlabel('Communication range [km]')
     plt.ylabel('Fuel saved by alliance [kg]')
     plt.title('Fuel saved by the alliance comparison')
-  
+    plt.savefig('figures/vis_alliance_comp')
+    
     # Number of formations comparison
     plt.figure()
+#    plt.errorbar(x, y, e, linestyle='None', marker='^')
     plt.plot([50,200,500], split_n_formations_data, marker='o', color='b')
     plt.xlabel('Communication range [km]')
     plt.ylabel('Number of formations')
     plt.title('Number of formations comparison')   
+    plt.savefig('figures/vis_n_formaions_comp')
+    
+    # Flight time comparison
+    plt.figure()
+#    plt.errorbar(x, y, e, linestyle='None', marker='^')
+    plt.plot([50,200,500], split_dist_data, marker='o', color='b')
+    plt.xlabel('Communication range [km]')
+    plt.ylabel('Flown distance [km]')
+    plt.title('Distance flown comparison') 
+    plt.savefig('figures/vis_dist_comp')
     
 #-----------------------------------------------------------------------------
 ### ORIGIN AND DESTINATION COMPARISON
@@ -225,36 +244,56 @@ if auction_comp:
     split_dist_data[1] = sum(split_dist_data[1]) / iterations
     split_dist_data[2] = sum(split_dist_data[2]) / iterations
     
+    # Average deal value of bidding agents
+    split_deal_data = np.array_split(run_data['Deal value'], 3)
+    split_deal_data[0] = (sum(split_deal_data[0]) / iterations) / run_data['N bidding agents']
+    split_deal_data[1] = (sum(split_deal_data[1]) / iterations) / run_data['N bidding agents']
+    split_deal_data[2] = (sum(split_deal_data[2]) / iterations) / run_data['N bidding agents']
+    
     # PLOT DATA
     # Fuel saved per kilometer comparison
     plt.figure()
     plt.bar(0.7, split_spec_fuel_save_data[0], width=0.3, label='English')
     plt.bar(1, split_spec_fuel_save_data[1], width=0.3, label='Vickrey')
     plt.bar(1.3, split_spec_fuel_save_data[2], width=0.3, label='Japanese')
-    plt.xlabel('Iteration')
+#    plt.xlabel('Iteration')
     plt.ylabel('Fuel saved per kilometer [kg/km]')
     plt.title('Fuel saved per kilometer comparison')
     plt.legend()
+    plt.savefig('figures/auc_fuel_saved_comp')
 
-    # Fuel saved per kilometer comparison
+    # N formations comparison
     plt.figure()
     plt.bar(0.7, split_n_formations_data[0], width=0.3, label='English')
     plt.bar(1, split_n_formations_data[1], width=0.3, label='Vickrey')
     plt.bar(1.3, split_n_formations_data[2], width=0.3, label='Japanese')
-    plt.xlabel('Iteration')
+#    plt.xlabel('Iteration')
     plt.ylabel('Fuel saved per kilometer [kg/km]')
     plt.title('Fuel saved per kilometer comparison')
     plt.legend()
+    plt.savefig('figures/auc_n_formations_comp')
     
-    # Fuel saved per kilometer comparison
+    # total distance comparison
     plt.figure()
     plt.bar( 0.7, split_dist_data[0], width=0.3, label='English')
     plt.bar( 1, split_dist_data[1], width=0.3, label='Vickrey')
     plt.bar( 1.3 , split_dist_data[2], width=0.3, label='Japanese')
-    plt.xlabel('Iteration')
+#    plt.xlabel('Iteration')
     plt.ylabel('Fuel saved per kilometer [kg/km]')
     plt.title('Fuel saved per kilometer comparison')
     plt.legend()
+    plt.savefig('figures/auc_dist_comp')
+    
+    # total distance comparison
+    plt.figure()
+    plt.bar( 0.7, split_deal_data[0], width=0.3, label='English')
+    plt.bar( 1, split_deal_data[1], width=0.3, label='Vickrey')
+    plt.bar( 1.3 , split_deal_data[2], width=0.3, label='Japanese')
+#    plt.xlabel('Iteration')
+    plt.ylabel('Deal value bidding agent [kg]')
+    plt.title('Deal value comparison')
+    plt.legend()
+    plt.savefig('figures/auc_deal_comp')
     
 
 
