@@ -16,6 +16,7 @@ vision_comp = False
 auction_comp = False
 
 airport_pos_comp = False
+
 # PLot data of all three runs
 first = False
 second = False

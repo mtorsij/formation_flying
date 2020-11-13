@@ -19,8 +19,8 @@ def do_Vickrey(flight):
             bid_value = true_value_strategy(flight, formation_target)
             
             if bid_value > 0:
-                # Make bid
-                flight.make_bid(formation_target, bid_value, 5)
+                # Depending on the risk parameter bid true value or increase the price to increase chance of winning
+                flight.make_bid(formation_target, bid_value * flight.risk, 5)
             
     ### MANAGERS ###
     elif flight.accepting_bids == 1:

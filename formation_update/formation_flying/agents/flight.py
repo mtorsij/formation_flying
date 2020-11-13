@@ -14,7 +14,7 @@
 '''
 
 import numpy as np
-
+import random
 from mesa import Agent
 from .airports import Airport
 from ..negotiations.greedy import do_greedy
@@ -24,6 +24,7 @@ from ..negotiations.vickrey import do_Vickrey
 from ..negotiations.japanese import do_Japanese
 
 from math import *
+
 
 
 def calc_distance(p1, p2):
@@ -113,6 +114,9 @@ class Flight(Agent):
         self.received_bids = []
         self.made_bids = []
         self.manager_expiration = 0
+        
+        # Risk for the Vickrey auction method
+        self.risk = random.choice([1.0,1.0,1.1,1.2])
         
         # Japanese method agents in autcion
         self.agents_in_auction = []
