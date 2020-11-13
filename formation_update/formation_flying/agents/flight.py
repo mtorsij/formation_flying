@@ -33,6 +33,42 @@ def calc_distance(p1, p2):
     dist = (((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5)  ##x and y position x=0 y=1
     return dist
 
+def define_circle(p1, p2, p3):
+    """
+    Returns the center and radius of the circle passing the given 3 points.
+    In case the 3 points form a line, returns (None, infinity).
+    """
+    temp = p2[0] * p2[0] + p2[1] * p2[1]
+    bc = (p1[0] * p1[0] + p1[1] * p1[1] - temp) / 2
+    cd = (temp - p3[0] * p3[0] - p3[1] * p3[1]) / 2
+    det = (p1[0] - p2[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p2[1])
+
+    if abs(det) < 1.0e-6:
+        return (None, np.inf)
+
+    """Center of circle"""
+    cx = (bc*(p2[1] - p3[1]) - cd*(p1[1] - p2[1])) / det
+    cy = ((p1[0] - p2[0]) * cd - (p2[0] - p3[0]) * bc) / det
+
+    radius = np.sqrt((cx - p1[0])**2 + (cy - p1[1])**2)
+    return ([cx, cy], radius)
+
+#formula circle (x-center[0])**2 + (y-center[1])**2 = r**2
+def intersection(dydx,x1,x2,p3,center,radius,n): #j = -1 for jp and j=1 for lp
+    for x in np.arange(x1,x2+n,n):
+        y_line = dydx*(x-p3[0])+p3[1]
+        # print(radius**2-(x-center[0])**2)
+        if (radius ** 2 - (x - center[0]) ** 2) <= 0:
+            continue
+        y_circle_bottom = np.sqrt(radius ** 2 - (x - center[0]) ** 2) + center[1]
+        y_circle_top = -np.sqrt(radius ** 2 - (x - center[0]) ** 2) + center[1]
+        if abs(y_line - y_circle_bottom) < 0.1:
+            inters = [x,y_circle_bottom]
+            break
+        elif abs(y_line - y_circle_top) < 0.1:
+            inters = [x,y_circle_top]
+            break
+    return inters
 
 class Flight(Agent):
 
@@ -425,51 +461,152 @@ class Flight(Agent):
     def calc_middle_point(self, a, b, j):  # busy with this
         old = [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
         old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]
-        if j == 'j':
-            dist = calc_distance(a.pos,b.pos)
-            AJ = (0.5 * dist) / cos(60 * pi / 180)
-            if a.pos[0] - b.pos[0] < 0.0:      #a is left and b is right of map
-                JP = [a.pos[0] + (cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
-            elif a.pos[0] - b.pos[0] == 0.0:
-                JP = [a.pos[0], max(a.pos[1],b.pos[1])]
+        dist = calc_distance(a.pos, b.pos)
+        if dist <= 0.1:
+            JP = a.pos
+            return JP
+        w_a = len(a.agents_in_my_formation) + 1
+        w_b = len(b.agents_in_my_formation) + 1
+        w_c = min((w_b + w_a - 0.01), (0.87 * (w_a + w_b - 1) * (1 + 0.035 * (w_a + w_b - 2)) + 1))
+        AX1 = dist * w_b / w_c
+        BX1 = dist * w_a / w_c
+        ##Determine X1andX2 coordinates to determine circle and joining point##
+        if a.pos[0] < b.pos[0]:  # a is left and b is right of map
+            angle_cs = atan(abs(b.pos[1] - a.pos[1]) / abs(b.pos[0] - a.pos[0]))
+            angle_A = acos((BX1 ** 2 + dist ** 2 - AX1 ** 2) / (2 * BX1 * dist))
+            if a.pos[1] > b.pos[1]:
+                X1 = [a.pos[0] + cos(angle_A + angle_cs) * AX1, a.pos[1] - sin(angle_A + angle_cs) * AX1]
+                X2 = [a.pos[0] + cos(angle_A - angle_cs) * AX1, a.pos[1] + sin(angle_A - angle_cs) * AX1]
             else:
-                JP = [a.pos[0] - (cos(60 * pi / 180)*AJ), a.pos[1] + (sin(60 * pi / 180)*AJ)]
-                
+                X1 = [a.pos[0] + cos(angle_A - angle_cs) * AX1, a.pos[1] - sin(angle_A - angle_cs) * AX1]
+                X2 = [a.pos[0] + cos(angle_A + angle_cs) * AX1, a.pos[1] + sin(angle_A + angle_cs) * AX1]
+        else:
+            angle_cs = atan(abs(b.pos[1] - a.pos[1]) / abs(b.pos[0] - a.pos[0]))
+            angle_B = acos((AX1 ** 2 + dist ** 2 - BX1 ** 2) / (2 * AX1 * dist))
+            if b.pos[1] > a.pos[1]:
+                X1 = [b.pos[0] + cos(angle_B + angle_cs) * BX1, b.pos[1] - sin(angle_B + angle_cs) * BX1]
+                X2 = [b.pos[0] + cos(angle_B - angle_cs) * BX1, b.pos[1] + sin(angle_B - angle_cs) * BX1]
+            else:
+                X1 = [b.pos[0] + cos(angle_B - angle_cs) * BX1, b.pos[1] - sin(angle_B - angle_cs) * BX1]
+                X2 = [b.pos[0] + cos(angle_B + angle_cs) * BX1, b.pos[1] + sin(angle_B + angle_cs) * BX1]
+        # if X1[1] < X2[1]:
+        #     # center_X, radius_X = define_circle(a.pos, b.pos, X1)
+        #     X = X1
+        # else:
+        #     center_X, radius_X = define_circle(a.pos, b.pos, X2)
+        #     X = X2
+        ##Determine Y1andY2 coordinates to determine circle and leaving point##
+        dist_des = calc_distance(a.destination, b.destination)
+        if dist_des <= 0.1:
+            LP = a.destination
+            return LP
+        if a.destination[0] == b.destination[0]:
+            LP = [a.destination[0], min(a.destination[1], b.destination[1])]
+            return LP
+        AY1 = dist_des * w_b / w_c
+        BY1 = dist_des * w_a / w_c
+        angle_cs_des = atan(abs(b.destination[1] - a.destination[1]) / abs(b.destination[0] - a.destination[0]))
+        if a.destination[0] < b.destination[0]:  # a is left and b is right of map
+            angle_A_des = acos((BY1 ** 2 + dist_des ** 2 - AY1 ** 2) / (2 * BY1 * dist_des))
+            Y1 = [a.destination[0] + cos(angle_A_des + angle_cs_des) * AY1,
+                  a.destination[1] - sin(angle_A_des + angle_cs_des) * AY1]
+            Y2 = [a.destination[0] + cos(angle_A_des - angle_cs_des) * AY1,
+                  a.destination[1] + sin(angle_A_des - angle_cs_des) * AY1]
+        else:
+            angle_B_des = acos((AY1 ** 2 + dist_des ** 2 - BY1 ** 2) / (2 * AY1 * dist_des))
+            Y1 = [b.destination[0] + cos(angle_B_des + angle_cs_des) * BY1,
+                  b.destination[1] - sin(angle_B_des + angle_cs_des) * BY1]
+            Y2 = [b.destination[0] + cos(angle_B_des - angle_cs_des) * BY1,
+                  b.destination[1] + sin(angle_B_des - angle_cs_des) * BY1]
+        # if Y1[1] > Y2[1]:
+        #     # center_Y, radius_Y = define_circle(a.pos, b.pos, Y1)
+        #     Y = Y1
+        # else:
+        #     # center_Y, radius_Y = define_circle(a.pos, b.pos, Y2)
+        #     Y = Y2
+        if j == 'j':
+            if X1[1] > X2[1]:
+                JP = X1
+            else:
+                JP = X2
             if JP[1] > 750 or JP[0] > 750:
                 if JP[0] > 750:
                     JP[0] = 700
                 else:
                     JP[1] = 700
-                    
+
             if JP[1] < 0 or JP[0] < 0:
                 if JP[0] < 0:
                     JP[0] = 10
                 else:
                     JP[1] = 10
-                    
+            print("JP = ", JP)
             return JP
         else:
-            dist_dest = calc_distance(a.destination,b.destination)
-            AL = (0.5 * dist_dest) / sin(30 * pi / 180)
-            if a.destination[0] - b.destination[0] < 0.0:      #a is left and b is right of map
-                LP = [a.destination[0] + (cos(30 * pi/180)*AL), a.destination[1] - (sin(30 * pi/180))*AL]
-            elif a.destination[0] - b.destination[0] == 0.0:
-                LP = [a.destination[0], max(a.destination[1],b.destination[1])]
+            if Y1[1] < Y2[1]:
+                LP = Y1
             else:
-                LP = [a.destination[0] - (cos(30 * pi / 180)*AL), a.destination[1] - (sin(30 * pi/180)*AL)]
-            
+                LP = Y2
             if LP[1] > 750 or LP[0] > 750:
                 if LP[0] > 750:
                     LP[0] = 700
                 else:
                     LP[1] = 700
-            
+
             if LP[1] < 0 or LP[0] < 0:
                 if LP[0] < 0:
                     LP[0] = 10
                 else:
-                    LP[1] = 10            
+                    LP[1] = 10
+            print("LP =",  LP)
             return LP
+        # old = [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
+        # old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]
+        # if j == 'j':
+        #     dist = calc_distance(a.pos,b.pos)
+        #     AJ = (0.5 * dist) / cos(60 * pi / 180)
+        #     if a.pos[0] - b.pos[0] < 0.0:      #a is left and b is right of map
+        #         JP = [a.pos[0] + (cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
+        #     elif a.pos[0] - b.pos[0] == 0.0:
+        #         JP = [a.pos[0], max(a.pos[1],b.pos[1])]
+        #     else:
+        #         JP = [a.pos[0] - (cos(60 * pi / 180)*AJ), a.pos[1] + (sin(60 * pi / 180)*AJ)]
+        #
+        #     if JP[1] > 750 or JP[0] > 750:
+        #         if JP[0] > 750:
+        #             JP[0] = 700
+        #         else:
+        #             JP[1] = 700
+        #
+        #     if JP[1] < 0 or JP[0] < 0:
+        #         if JP[0] < 0:
+        #             JP[0] = 10
+        #         else:
+        #             JP[1] = 10
+        #
+        #     return JP
+        # else:
+        #     dist_dest = calc_distance(a.destination,b.destination)
+        #     AL = (0.5 * dist_dest) / sin(30 * pi / 180)
+        #     if a.destination[0] - b.destination[0] < 0.0:      #a is left and b is right of map
+        #         LP = [a.destination[0] + (cos(30 * pi/180)*AL), a.destination[1] - (sin(30 * pi/180))*AL]
+        #     elif a.destination[0] - b.destination[0] == 0.0:
+        #         LP = [a.destination[0], max(a.destination[1],b.destination[1])]
+        #     else:
+        #         LP = [a.destination[0] - (cos(30 * pi / 180)*AL), a.destination[1] - (sin(30 * pi/180)*AL)]
+        #
+        #     if LP[1] > 750 or LP[0] > 750:
+        #         if LP[0] > 750:
+        #             LP[0] = 700
+        #         else:
+        #             LP[1] = 700
+        #
+        #     if LP[1] < 0 or LP[0] < 0:
+        #         if LP[0] < 0:
+        #             LP[0] = 10
+        #         else:
+        #             LP[1] = 10
+        #     return LP
         
         
 
@@ -555,10 +692,12 @@ class Flight(Agent):
         dist_self = ((joining_point[0] - self.pos[0]) ** 2 + (joining_point[1] - self.pos[1]) ** 2) ** 0.5
         dist_neighbor = ((joining_point[0] - self.pos[0]) ** 2 + (joining_point[1] - self.pos[1]) ** 2) ** 0.5
 
-        if abs(1 - dist_self / dist_neighbor) > 0.001:
-            # If this exception is thrown, it means that the joining point is
-            # not at equal distances from both aircraft.
-            raise Exception("Joining point != middle point")
+        if dist_self < dist_neighbor:
+            "To make sure they arrive at the joining point at the same time"
+            frac = dist_self/dist_neighbor
+            self.speed = frac*self.speed
+        else:
+            self.speed = self.speed
 
         rest = dist_self % self.speed
         regular_time = floor(dist_self / self.speed)
