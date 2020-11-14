@@ -41,12 +41,12 @@ model_params = {
     "n_flights": 50,
     "n_origin_airports": 20,
     "n_destination_airports": 20,
-#    "communication_range": 200, #[km]
+    "communication_range": 200, #[km]
     "width": 750, # [km]
     "height": 750, # [km]
     "speed": 0.3, #[km / second]
     "fuel_reduction": 0.75, 
-    "negotiation_method": 1,
+#    "negotiation_method": 1,
     "departure_window": 3, 
     "origin_airport_x": [0.01, 0.3],  #[0, 0.1], [0, 0.2], [0, 0.3]
     "origin_airport_y": [0.01, 0.3],  # [0, 0.1], [0, 0.2], [0, 0.3]
@@ -56,7 +56,7 @@ model_params = {
 
 # To run model with a variable parameter:
 #variable_params = {"communication_range": [50, 200, 500]}
-variable_params = {"negotiation_method": [0,1]}
+variable_params = {"negotiation_method": [2,3,4]}
 
 
 model_reporter_parameters={"Total Fuel Used": compute_total_fuel_used, 

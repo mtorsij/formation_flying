@@ -34,22 +34,39 @@ def do_English(flight):
         # Check if received bids
         if flight.received_bids != []:        
             
+            #Check if highest bidder is already assigned
+            if flight.highest_bidding_agent == []:
+                flight.highest_bidding_agent.append({'highest bidder': flight.received_bids[0]['bidding_agent'], 'value': flight.received_bids[0]['value']})
+            
             # If current highest is highest from last round -> formation
-            if flight.highest_bidding_agent[0] == flight.received_bids[0]['bidding_agent'] and flight.highest_bidding_agent[1] == flight.received_bids[0]['value']:
-                # Check if flight is already in formation
-                if flight.formation_state == 0:
-                    if flight.received_bids[0]['bidding_agent'].formation_state == 0:    
-                        flight.start_formation(flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value'])
+            if flight.highest_bidding_agent[0]['highest bidder'] == flight.received_bids[0]['bidding_agent'] and flight.highest_bidding_agent[0]['value'] == flight.received_bids[0]['value']:
                 
-                # Manager is already in formation
-                elif flight.formation_state != 0 or flight.formation_state != 4:
-                    if flight.received_bids[0]['bidding_agent'].formation_state == 0:
-                        flight.add_to_formation(flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value'])
+                # Deal value must be greater than 0
+                if flight.received_bids[0]['value'] > 0:
                 
-                # Clear received_bids list for next auction
-                flight.received_bids = []
+                    # Check if flight is already in formation
+                    if flight.formation_state == 0:
+                        if flight.received_bids[0]['bidding_agent'].formation_state == 0:    
+                            flight.start_formation(flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value'])
+                    
+                    # Manager is already in formation
+                    elif flight.formation_state != 0 or flight.formation_state != 4:
+                        if flight.received_bids[0]['bidding_agent'].formation_state == 0:
+                            flight.add_to_formation(flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value'])
+                    
+                    # Clear received_bids list for next auction
+                    flight.received_bids = []
             
             # Update current highest bidding agent
             else:
-                flight.highest_bidding_agent = [flight.received_bids[0]['bidding_agent'], flight.received_bids[0]['value']]
+                flight.highest_bidding_agent[0] = {'highest bidder': flight.received_bids[0]['bidding_agent'], 'value': flight.received_bids[0]['value']}
+            
+            
+            
+            
+            
+            
+            
+            
+            
             

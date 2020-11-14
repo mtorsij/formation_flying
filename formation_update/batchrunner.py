@@ -11,9 +11,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 # Choose what has to be compared
-greedy_comp = True
+greedy_comp = False
 vision_comp = False
-auction_comp = False
+auction_comp = True
 
 airport_pos_comp = False
 
@@ -24,7 +24,7 @@ third = False
 plot_all = False
 
 # Number of iterations
-iterations = 3
+iterations = 20
 
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
@@ -155,7 +155,7 @@ if vision_comp:
     plt.xlabel('Communication range [km]')
     plt.ylabel('Number of formations')
     plt.title('Number of formations comparison')   
-    plt.savefig('figures/vis_n_formaions_comp')
+    plt.savefig('figures/vis_n_formations_comp')
     
     # Flight time comparison
     plt.figure()
@@ -239,16 +239,17 @@ if auction_comp:
     split_n_formations_data[2] = sum(split_n_formations_data[2]) / iterations
     
      # Total distance flown
-    split_dist_data = np.array_split(run_data['flight_time'], 3)
+    split_dist_data = np.array_split(run_data['flight time'], 3)
     split_dist_data[0] = sum(split_dist_data[0]) / iterations
     split_dist_data[1] = sum(split_dist_data[1]) / iterations
     split_dist_data[2] = sum(split_dist_data[2]) / iterations
     
     # Average deal value of bidding agents
-    split_deal_data = np.array_split(run_data['Deal value'], 3)
-    split_deal_data[0] = (sum(split_deal_data[0]) / iterations) / run_data['N bidding agents']
-    split_deal_data[1] = (sum(split_deal_data[1]) / iterations) / run_data['N bidding agents']
-    split_deal_data[2] = (sum(split_deal_data[2]) / iterations) / run_data['N bidding agents']
+    split_deal_data = np.array_split(run_data['Deal values'], 3)
+    split_n_bidding_agents_data = np.array_split(run_data['N bidding agents'], 3)
+    split_deal_data[0] = (sum(split_deal_data[0]) / iterations) / (sum(split_n_bidding_agents_data[0]) / iterations)
+    split_deal_data[1] = (sum(split_deal_data[1]) / iterations) / (sum(split_n_bidding_agents_data[1]) / iterations)
+    split_deal_data[2] = (sum(split_deal_data[2]) / iterations) / (sum(split_n_bidding_agents_data[2]) / iterations)
     
     # PLOT DATA
     # Fuel saved per kilometer comparison

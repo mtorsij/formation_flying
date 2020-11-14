@@ -80,14 +80,15 @@ def do_CNP(flight):
                 raise Exception('Both in formation')
         
         # Start formation or add formation, depending on state of manager, with best bid agent
-        if best_bid != []:    
-            if best_bid[0]['value'] > 0:
-                if flight.formation_state == 0:
-                    flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
-                    
-                elif flight.formation_state != 0 or flight.formation_state != 4:
-                    if best_bid[0]['bidding_agent'].formation_state == 0:
-                        flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+        if best_bid != []:   
+            if best_bid[0]['value'] / best_bid[2] > 0.2:
+                if best_bid[0]['value'] > 0:
+                    if flight.formation_state == 0:
+                        flight.start_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
+                        
+                    elif flight.formation_state != 0 or flight.formation_state != 4:
+                        if best_bid[0]['bidding_agent'].formation_state == 0:
+                            flight.add_to_formation(best_bid[0]['bidding_agent'], best_bid[0]['value'])
                         
         flight.received_bids = []
         

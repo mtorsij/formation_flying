@@ -18,20 +18,10 @@ def real_fuel_saved(model):
     return model.total_planned_fuel - model.total_fuel_consumption
 
 def total_deal_value(model):
-    deal_value_bidding_agents = 0
-    for agent in model.schedule.agents:
-        if agent.deal_value > 0:
-            if agent.manager == 0:
-                deal_value_bidding_agents += agent.deal_value
-    return deal_value_bidding_agents
+    return model.total_auction_value
 
 def n_bidding_agents(model):
-    n_bidding_agents = 0
-    for agent in model.schedule.agents:
-        if agent.deal_value > 0:
-            if agent.manager == 0:
-                n_bidding_agents += 1
-    return n_bidding_agents
+    return model.n_auctions_won
     
 def compute_total_flight_time(model):
     return model.total_flight_time

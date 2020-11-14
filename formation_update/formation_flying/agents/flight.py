@@ -143,7 +143,7 @@ class Flight(Agent):
         self.strategy = 0
         
         # For english
-        self.highest_bidding_agent = 0
+        self.highest_bidding_agent = []
         
         # Manager and auctioneer determination
         self.accepting_bids = 0
@@ -300,7 +300,11 @@ class Flight(Agent):
             
             self.model.add_to_formation_counter += 1
             self.accepting_bids = False
-    
+            
+            # For auctions to determine average winning bid
+            self.model.n_auctions_won += 1
+            self.model.total_auction_value += bid_value
+            
             if discard_received_bids:
                 # Discard all bids that have been received
                 self.received_bids = []
@@ -363,7 +367,11 @@ class Flight(Agent):
             self.model.fuel_savings_closed_deals += fuel_saving
             self.deal_value += bid_value
             target_agent.deal_value -= bid_value
-    
+            
+            # For auctions to determine average winning bid
+            self.model.n_auctions_won += 1
+            self.model.total_auction_value += bid_value
+            
             # Counter to keep track of saved fuel of alliance
             if self.alliance == 1 and target_agent.alliance == 1:
                 self.model.alliance_saved_fuel += fuel_saving
@@ -540,7 +548,7 @@ class Flight(Agent):
                     JP[0] = 10
                 else:
                     JP[1] = 10
-            print("JP = ", JP)
+#            print("JP = ", JP)
             return JP
         else:
             if Y1[1] < Y2[1]:
@@ -558,7 +566,7 @@ class Flight(Agent):
                     LP[0] = 10
                 else:
                     LP[1] = 10
-            print("LP =",  LP)
+#            print("LP =",  LP)
             return LP
         # old = [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
         # old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]

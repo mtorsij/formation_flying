@@ -58,27 +58,30 @@ def do_Japanese(flight):
         # If one flight remains, pick the winner and start formation
         if flights_in_auction_counter == 1:
             
-            # Start formation with the remaining agent
-            # Check if flight is already in formation
-            if flight.formation_state == 0:
-                if winner.formation_state == 0:    
-                    flight.start_formation(winner, flight.current_price)
-            
-            # Manager is already in formation
-            elif flight.formation_state != 0 or flight.formation_state != 4:
-                if winner.formation_state == 0:
-                    flight.add_to_formation(winner, flight.current_price)
-                    
-            # Reset current price based on number of agents in formation and adjust price increase per step
-            if len(flight.agents_in_my_formation) > 2:
-                flight.current_price = 50
-                flight.price_increase = 10
-            else:
-                flight.current_price = 80
-                flight.price_increase = 20
-            
-            # Reset agents in auction list
-            flight.agents_in_auction = []
+            # Make sure that the price the bidding agent has to pay is larger than 0
+            if flight.current_price > 0:    
+               
+                # Start formation with the remaining agent
+                # Check if flight is already in formation
+                if flight.formation_state == 0:
+                    if winner.formation_state == 0:    
+                        flight.start_formation(winner, flight.current_price)
+                
+                # Manager is already in formation
+                elif flight.formation_state != 0 or flight.formation_state != 4:
+                    if winner.formation_state == 0:
+                        flight.add_to_formation(winner, flight.current_price)
+                        
+                # Reset current price based on number of agents in formation and adjust price increase per step
+                if len(flight.agents_in_my_formation) > 2:
+                    flight.current_price = 50
+                    flight.price_increase = 10
+                else:
+                    flight.current_price = 80
+                    flight.price_increase = 20
+                
+                # Reset agents in auction list
+                flight.agents_in_auction = []
         
         # If flights are in the auction decrease price
         if flights_in_auction_counter == 0:

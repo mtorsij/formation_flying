@@ -80,7 +80,7 @@ class FormationFlying(Model):
         self.departure_window = departure_window
         self.fuel_reduction = fuel_reduction
         self.negotiation_method = negotiation_method
-
+        
         self.fuel_savings_closed_deals = 0
 
         self.total_planned_fuel = 0
@@ -96,6 +96,10 @@ class FormationFlying(Model):
         # In format {'manager': agent, 'n agents in formation': n}
         self.formation_list = []
         self.n_formation_list = [0]
+        
+        # How many agents won auctions
+        self.n_auctions_won = 0
+        self.total_auction_value = 0
         
         self.origin_list = []
         self.destination_list = []
