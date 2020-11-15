@@ -6,6 +6,7 @@
 from formation_flying.negotiations.bid_strategies.true_value_strategy import true_value_strategy
 
 def do_Japanese(flight):
+    
     ### AUCTIONEERS ###
     if flight.accepting_bids == 0 and flight.formation_state == 0:
         # If the agent is not yet in a formation, auctioneers find managers to make bid to
@@ -20,6 +21,7 @@ def do_Japanese(flight):
             # Make sure that agent only enters an auction once
             already_entered = False                
             
+            # If this agent is the first agent to join
             if formation_target.agents_in_auction == [] and formation_target.current_price < max_bid_value:
                 formation_target.agents_in_auction.append({'agent': flight, 'state': 'in auction'})
                 already_entered = True

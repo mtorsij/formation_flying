@@ -53,7 +53,7 @@ def define_circle(p1, p2, p3):
     radius = np.sqrt((cx - p1[0])**2 + (cy - p1[1])**2)
     return ([cx, cy], radius)
 
-#formula circle (x-center[0])**2 + (y-center[1])**2 = r**2
+# Formula circle (x-center[0])**2 + (y-center[1])**2 = r**2
 def intersection(dydx,x1,x2,p3,center,radius,n): #j = -1 for jp and j=1 for lp
     for x in np.arange(x1,x2+n,n):
         y_line = dydx*(x-p3[0])+p3[1]
@@ -478,7 +478,8 @@ class Flight(Agent):
         w_c = min((w_b + w_a - 0.01), (0.87 * (w_a + w_b - 1) * (1 + 0.035 * (w_a + w_b - 2)) + 1))
         AX1 = dist * w_b / w_c
         BX1 = dist * w_a / w_c
-        ##Determine X1andX2 coordinates to determine circle and joining point##
+       
+        # Determine X1 and X2 coordinates to determine circle and joining point##
         if a.pos[0] < b.pos[0]:  # a is left and b is right of map
             angle_cs = atan(abs(b.pos[1] - a.pos[1]) / abs(b.pos[0] - a.pos[0]))
             angle_A = acos((BX1 ** 2 + dist ** 2 - AX1 ** 2) / (2 * BX1 * dist))
@@ -497,41 +498,37 @@ class Flight(Agent):
             else:
                 X1 = [b.pos[0] + cos(angle_B - angle_cs) * BX1, b.pos[1] - sin(angle_B - angle_cs) * BX1]
                 X2 = [b.pos[0] + cos(angle_B + angle_cs) * BX1, b.pos[1] + sin(angle_B + angle_cs) * BX1]
-        # if X1[1] < X2[1]:
-        #     # center_X, radius_X = define_circle(a.pos, b.pos, X1)
-        #     X = X1
-        # else:
-        #     center_X, radius_X = define_circle(a.pos, b.pos, X2)
-        #     X = X2
+      
+        
         ##Determine Y1andY2 coordinates to determine circle and leaving point##
         dist_des = calc_distance(a.destination, b.destination)
         if dist_des <= 0.1:
             LP = a.destination
             return LP
+        
         if a.destination[0] == b.destination[0]:
             LP = [a.destination[0], min(a.destination[1], b.destination[1])]
             return LP
+       
         AY1 = dist_des * w_b / w_c
         BY1 = dist_des * w_a / w_c
         angle_cs_des = atan(abs(b.destination[1] - a.destination[1]) / abs(b.destination[0] - a.destination[0]))
+        
         if a.destination[0] < b.destination[0]:  # a is left and b is right of map
             angle_A_des = acos((BY1 ** 2 + dist_des ** 2 - AY1 ** 2) / (2 * BY1 * dist_des))
             Y1 = [a.destination[0] + cos(angle_A_des + angle_cs_des) * AY1,
                   a.destination[1] - sin(angle_A_des + angle_cs_des) * AY1]
             Y2 = [a.destination[0] + cos(angle_A_des - angle_cs_des) * AY1,
                   a.destination[1] + sin(angle_A_des - angle_cs_des) * AY1]
+        
         else:
             angle_B_des = acos((AY1 ** 2 + dist_des ** 2 - BY1 ** 2) / (2 * AY1 * dist_des))
             Y1 = [b.destination[0] + cos(angle_B_des + angle_cs_des) * BY1,
                   b.destination[1] - sin(angle_B_des + angle_cs_des) * BY1]
             Y2 = [b.destination[0] + cos(angle_B_des - angle_cs_des) * BY1,
                   b.destination[1] + sin(angle_B_des - angle_cs_des) * BY1]
-        # if Y1[1] > Y2[1]:
-        #     # center_Y, radius_Y = define_circle(a.pos, b.pos, Y1)
-        #     Y = Y1
-        # else:
-        #     # center_Y, radius_Y = define_circle(a.pos, b.pos, Y2)
-        #     Y = Y2
+        
+        # Ensure that the joining or leaving point is not out of bounds
         if j == 'j':
             if X1[1] > X2[1]:
                 JP = X1
@@ -567,56 +564,7 @@ class Flight(Agent):
                 else:
                     LP[1] = 10
 #            print("LP =",  LP)
-            return LP
-        # old = [0.5 * (a.pos[0] + b.pos[0]), 0.5 * (a.pos[1] + b.pos[1])]
-        # old2 = [0.5 * (a.destination[0] + b.destination[0]), 0.5 * (a.destination[1] + b.destination[1])]
-        # if j == 'j':
-        #     dist = calc_distance(a.pos,b.pos)
-        #     AJ = (0.5 * dist) / cos(60 * pi / 180)
-        #     if a.pos[0] - b.pos[0] < 0.0:      #a is left and b is right of map
-        #         JP = [a.pos[0] + (cos(60 * pi/180)*AJ), a.pos[1] + (sin(60 * pi/180))*AJ]
-        #     elif a.pos[0] - b.pos[0] == 0.0:
-        #         JP = [a.pos[0], max(a.pos[1],b.pos[1])]
-        #     else:
-        #         JP = [a.pos[0] - (cos(60 * pi / 180)*AJ), a.pos[1] + (sin(60 * pi / 180)*AJ)]
-        #
-        #     if JP[1] > 750 or JP[0] > 750:
-        #         if JP[0] > 750:
-        #             JP[0] = 700
-        #         else:
-        #             JP[1] = 700
-        #
-        #     if JP[1] < 0 or JP[0] < 0:
-        #         if JP[0] < 0:
-        #             JP[0] = 10
-        #         else:
-        #             JP[1] = 10
-        #
-        #     return JP
-        # else:
-        #     dist_dest = calc_distance(a.destination,b.destination)
-        #     AL = (0.5 * dist_dest) / sin(30 * pi / 180)
-        #     if a.destination[0] - b.destination[0] < 0.0:      #a is left and b is right of map
-        #         LP = [a.destination[0] + (cos(30 * pi/180)*AL), a.destination[1] - (sin(30 * pi/180))*AL]
-        #     elif a.destination[0] - b.destination[0] == 0.0:
-        #         LP = [a.destination[0], max(a.destination[1],b.destination[1])]
-        #     else:
-        #         LP = [a.destination[0] - (cos(30 * pi / 180)*AL), a.destination[1] - (sin(30 * pi/180)*AL)]
-        #
-        #     if LP[1] > 750 or LP[0] > 750:
-        #         if LP[0] > 750:
-        #             LP[0] = 700
-        #         else:
-        #             LP[1] = 700
-        #
-        #     if LP[1] < 0 or LP[0] < 0:
-        #         if LP[0] < 0:
-        #             LP[0] = 10
-        #         else:
-        #             LP[1] = 10
-        #     return LP
-        
-        
+            return LP                
 
     def distance_to_destination(self, destination):
         return ((destination[0] - self.pos[0]) ** 2 + (destination[1] - self.pos[1]) ** 2) ** 0.5

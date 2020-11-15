@@ -13,7 +13,7 @@ import numpy as np
 # Choose what has to be compared
 greedy_comp = False
 vision_comp = False
-auction_comp = True
+auction_comp = False
 
 airport_pos_comp = False
 
@@ -24,7 +24,7 @@ third = False
 plot_all = False
 
 # Number of iterations
-iterations = 20
+iterations = 1
 
 batch_run = BatchRunner(FormationFlying,
                             fixed_parameters=model_params,
@@ -105,7 +105,7 @@ if greedy_comp:
 if vision_comp:
     # SPLIT AND AVERAGE DATA
     # Fuel saved per km
-    spec_fuel_save_data = (run_data['Real saved fuel'])
+    spec_fuel_save_data = (run_data['Real saved fuel'] / run_data['flight time'])
     split_spec_fuel_save_data = np.array_split(spec_fuel_save_data, 3)
     split_spec_fuel_save_data[0] = sum(split_spec_fuel_save_data[0]) / iterations
     split_spec_fuel_save_data[1] = sum(split_spec_fuel_save_data[1]) / iterations

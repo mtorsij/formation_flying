@@ -23,9 +23,6 @@ def do_CNP(flight):
             if flight.strategy == 0:
                 bid_value, bid_expiration_date = simple_strategy(flight, formation_target, potential_fuel_saving)
             
-            ### HERE WE CAN IMPLEMENT MORE BID STRATEGIES
-#            if flight.strategy ==1:
-            
             # Make bid with values from a bid strategy
             if bid_value > 0:
                 flight.make_bid(formation_target, bid_value, bid_expiration_date)
@@ -48,7 +45,6 @@ def do_CNP(flight):
                     flight.received_bids.remove(bid)
             
         if highest_bid_lst != []:
-#            print(highest_bid_lst)
             
             if len(highest_bid_lst) > 1:     
                 # Choose 2 bids that pass the reservation value and minimize delay
@@ -65,7 +61,7 @@ def do_CNP(flight):
                         continue
             
                 # From bids that minimize delay choose the one with highest bid value
-                if optimal_bid_1[0]['value'] > optimal_bid_2[0]['value']: #and optimal_bid_1[0]['value'] > optimal_bid_3[0]['value']:
+                if optimal_bid_1[0]['value'] > optimal_bid_2[0]['value']:
                     best_bid = optimal_bid_1
                 
                 else:
@@ -102,10 +98,6 @@ def do_CNP(flight):
                         bid['bidding_agent'].manager = 1
                         bid['bidding_agent'].accepting_bids = 1
                         bid['bidding_agent'].made_bids = []
-#                        new_manager = True
-                        
-                ### BUILD FUNCTION IF NO SUITABLE NEW MANAGER IS FOUND
-#                if not new_manager:
                 
                 # Make current manager auctioneer
                 flight.manager = 0
@@ -114,34 +106,4 @@ def do_CNP(flight):
                 
             elif flight.formation_state == 0:
                 flight.manager_expiration += 1
-
-#=============================================================================       
-# BID EXPIRATION CHECKER (NOT WORKING)
-#=============================================================================
-#            # Check the expiration date
-#            if bid['exp_date'] == 0:
-#                # Remove bid from manager received bid list
-#                flight.received_bids.remove(bid)
-#                
-#                # Same for made bid list of auctioneer
-#                for made_bid in bid['bidding_agent'].made_bids:
-#                    if made_bid['bid_target'] == flight:
-#                        bid['bidding_agent'].made_bids.remove(made_bid)
-#            else:
-#                # Update expiration date in manager received bids list
-#                if bid in flight.received_bids:    
-#                    flight.received_bids[flight.received_bids.index(bid)]['exp_date'] -= 1
-#                
-#                # Do the same for the made bids list of auctioneer
-#                for i in range(len(bid['bidding_agent'].made_bids)):
-#                    if bid['bidding_agent'].made_bids[i]['bid_target'] == flight:
-#                        bid['bidding_agent'].made_bids[i]['exp_date'] -= 1
-    
-                
-
-        
-    
-    
-    
-        
                 
